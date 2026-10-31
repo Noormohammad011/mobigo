@@ -2,6 +2,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { ShoppingCartIcon } from "lucide-react"
 
+import { WishlistHeart } from "@/components/wishlist/wishlist-heart"
 import { Price } from "@/components/commerce/price-block"
 import { Badge } from "@/components/ui/badge"
 import { buttonVariants } from "@/components/ui/button"
@@ -34,6 +35,9 @@ export function ProductCard({
       )}
     >
       <div className="relative">
+        <div className="pointer-events-none absolute top-0 right-0 z-20">
+          <WishlistHeart productId={p.id} productSlug={p.slug} initialSaved={false} className="pointer-events-auto size-9 border-0 bg-card/90" />
+        </div>
         <div className="pointer-events-none absolute top-0 left-0 z-10 flex flex-wrap gap-1">
           {p.is5g && <Badge variant="5g">5G</Badge>}
           {p.isNew && <Badge variant="new">NEW</Badge>}

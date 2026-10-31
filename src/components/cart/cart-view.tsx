@@ -7,9 +7,15 @@ import { useEffect, useSyncExternalStore } from "react"
 import { mergeGuestCartAction, removeCartLineAction, updateCartQuantityAction } from "@/app/cart/actions"
 import { Price } from "@/components/commerce/price-block"
 import { QuantityStepper } from "@/components/commerce/quantity-stepper"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button"
 import { formatBDT } from "@/lib/format"
-import { clearGuestCart, readGuestCart } from "@/lib/cart/guest-cart"
+import {
+  clearGuestCart,
+  GUEST_CART_SERVER_SNAPSHOT,
+  getGuestCartSnapshot,
+  readGuestCart,
+  subscribeGuestCart,
+} from "@/lib/cart/guest-cart"
 import type { CartLineView } from "@/lib/cart/get-cart"
 import { cn } from "@/lib/utils"
 
@@ -20,31 +26,12 @@ const statusCopy: Record<CartLineView["status"], string> = {
   out_of_stock: "Out of stock.",
 }
 
-const subscribeGuestCart = (onChange: () => void) => {
-  window.addEventListener("mobigo-cart-updated", onChange)
-  window.addEventListener("storage", onChange)
-  return () => {
-    window.removeEventListener("mobigo-cart-updated", onChange)
-    window.removeEventListener("storage", onChange)
-  }
-}
-
-const SERVER_GUEST_CART: ReturnType<typeof readGuestCart> = []
-
-let guestCartSnapshot: ReturnType<typeof readGuestCart> = SERVER_GUEST_CART
-let guestCartKey = ""
-
-const getGuestCartSnapshot = () => {
-  const next = readGuestCart()
-  const key = JSON.stringify(next)
-  if (key === guestCartKey) return guestCartSnapshot
-  guestCartKey = key
-  guestCartSnapshot = next
-  return guestCartSnapshot
-}
-
 export const CartView = ({ signedIn, serverLines }: { signedIn: boolean; serverLines: CartLineView[] }) => {
-  const guestLines = useSyncExternalStore(subscribeGuestCart, getGuestCartSnapshot, () => SERVER_GUEST_CART)
+  const guestLines = useSyncExternalStore(
+    subscribeGuestCart,
+    getGuestCartSnapshot,
+    () => GUEST_CART_SERVER_SNAPSHOT
+  )
 
   useEffect(() => {
     if (!signedIn) return
@@ -135,14 +122,13 @@ export const CartView = ({ signedIn, serverLines }: { signedIn: boolean; serverL
           <span className="font-price">{formatBDT(subtotal)}</span>
         </p>
         {!signedIn ? (
-          <Link href="/auth/login?next=/cart" className={cn(buttonVariants({ variant: "default" }), "mt-2")}>
+          <Link href="/auth/login?next=/cart" className={cn(buttonVariants({ variant: "outline" }), "mt-2")}>
             Sign in to save your cart
           </Link>
-        ) : (
-          <Button type="button" disabled className="mt-2">
-            Checkout comes next
-          </Button>
-        )}
+        ) : null}
+        <Link href="/checkout" className={cn(buttonVariants({ variant: "default" }), "mt-2")}>
+          Checkout
+        </Link>
       </div>
     </div>
   )

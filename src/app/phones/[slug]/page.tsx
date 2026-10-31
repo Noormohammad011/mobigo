@@ -2,6 +2,7 @@ import { Suspense } from "react"
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 
+import { isProductWishlisted } from "@/app/wishlist/actions"
 import { ProductCard } from "@/components/commerce/product-card"
 import { MetadataDynamicMarker } from "@/components/layout/metadata-dynamic-marker"
 import { ProductPurchase } from "@/components/product/product-purchase"
@@ -63,10 +64,11 @@ const ProductDetailPurchase = async ({
   catalog: ProductDetailCatalog
   searchParams: Promise<Search>
 }) => {
-  const [product, user, resolvedSearch] = await Promise.all([
+  const user = await getCurrentUser()
+  const [product, resolvedSearch, wishlisted] = await Promise.all([
     attachProductAvailability(catalog),
-    getCurrentUser(),
     searchParams,
+    user ? isProductWishlisted(user.id, catalog.id) : Promise.resolve(false),
   ])
   const variantParam = typeof resolvedSearch.variant === "string" ? resolvedSearch.variant : null
   const heroImage = catalog.colors[0]?.images[0]?.url ?? null
@@ -75,7 +77,7 @@ const ProductDetailPurchase = async ({
     <>
       <ProductJsonLd product={product} variantId={variantParam} />
       <RecordRecentView item={{ slug: catalog.slug, name: catalog.name, brandName: catalog.brandName, imageUrl: heroImage }} />
-      <ProductPurchase product={product} signedIn={Boolean(user)} />
+      <ProductPurchase product={product} signedIn={Boolean(user)} wishlisted={wishlisted} />
     </>
   )
 }

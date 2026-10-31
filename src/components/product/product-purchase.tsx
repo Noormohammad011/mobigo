@@ -9,6 +9,7 @@ import { addToCartAction } from "@/app/cart/actions"
 import { Price } from "@/components/commerce/price-block"
 import { QuantityStepper } from "@/components/commerce/quantity-stepper"
 import { Badge } from "@/components/ui/badge"
+import { WishlistHeart } from "@/components/wishlist/wishlist-heart"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { addGuestLine } from "@/lib/cart/guest-cart"
 import type { ProductDetailPayload } from "@/lib/queries/product-detail"
@@ -28,7 +29,15 @@ const pickVariant = (product: ProductDetailPayload, variantId: string | null) =>
 const comboActive = (product: ProductDetailPayload, colorId: string, ram: number, storage: number) =>
   product.variants.some((variant) => variant.colorId === colorId && variant.ramGb === ram && variant.storageGb === storage)
 
-export const ProductPurchase = ({ product, signedIn }: { product: ProductDetailPayload; signedIn: boolean }) => {
+export const ProductPurchase = ({
+  product,
+  signedIn,
+  wishlisted,
+}: {
+  product: ProductDetailPayload
+  signedIn: boolean
+  wishlisted: boolean
+}) => {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [pending, startTransition] = useTransition()
@@ -106,10 +115,13 @@ export const ProductPurchase = ({ product, signedIn }: { product: ProductDetailP
       </div>
 
       <div className="flex flex-col gap-6" id="buy">
-        <div>
-          <p className="text-body-sm text-muted-foreground">{product.brandName}</p>
-          <h1 className="font-display text-h1 text-foreground">{product.name}</h1>
-          {selected ? <Price price={selected.price} compareAtPrice={selected.compareAtPrice} className="mt-3" /> : null}
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <p className="text-body-sm text-muted-foreground">{product.brandName}</p>
+            <h1 className="font-display text-h1 text-foreground">{product.name}</h1>
+            {selected ? <Price price={selected.price} compareAtPrice={selected.compareAtPrice} className="mt-3" /> : null}
+          </div>
+          <WishlistHeart productId={product.id} productSlug={product.slug} initialSaved={wishlisted} />
         </div>
 
         <div className="flex flex-col gap-3">

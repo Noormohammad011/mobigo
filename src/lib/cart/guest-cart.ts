@@ -11,16 +11,42 @@ export type GuestCartLine = {
 }
 
 const KEY = "mobigo_guest_cart"
+const EMPTY_CART: GuestCartLine[] = []
+
+/** Stable empty snapshot for SSR and useSyncExternalStore getServer. */
+export const GUEST_CART_SERVER_SNAPSHOT = EMPTY_CART
+
+let guestCartSnapshot: GuestCartLine[] = EMPTY_CART
+let guestCartKey = ""
 
 export const readGuestCart = (): GuestCartLine[] => {
-  if (typeof window === "undefined") return []
+  if (typeof window === "undefined") return EMPTY_CART
   try {
     const raw = localStorage.getItem(KEY)
-    if (!raw) return []
+    if (!raw) return EMPTY_CART
     const parsed = JSON.parse(raw) as GuestCartLine[]
-    return Array.isArray(parsed) ? parsed : []
+    return Array.isArray(parsed) ? parsed : EMPTY_CART
   } catch {
-    return []
+    return EMPTY_CART
+  }
+}
+
+/** Cached getSnapshot for useSyncExternalStore (must not return a new reference every call). */
+export const getGuestCartSnapshot = (): GuestCartLine[] => {
+  const next = readGuestCart()
+  const key = JSON.stringify(next)
+  if (key === guestCartKey) return guestCartSnapshot
+  guestCartKey = key
+  guestCartSnapshot = next
+  return guestCartSnapshot
+}
+
+export const subscribeGuestCart = (onChange: () => void) => {
+  window.addEventListener("mobigo-cart-updated", onChange)
+  window.addEventListener("storage", onChange)
+  return () => {
+    window.removeEventListener("mobigo-cart-updated", onChange)
+    window.removeEventListener("storage", onChange)
   }
 }
 

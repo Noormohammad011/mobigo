@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { requireUser } from "@/lib/auth/session";
@@ -29,6 +30,17 @@ async function AccountDetails() {
         <dt className="mt-2 text-muted-foreground">Mobile</dt>
         <dd className="font-medium">{user.phone ?? "Not set"}</dd>
       </dl>
+      <nav className="flex flex-col gap-2 text-body-sm">
+        <Link href="/account/orders" className="text-link underline">
+          Order history
+        </Link>
+        <Link href="/account/wishlist" className="text-link underline">
+          Wishlist
+        </Link>
+        <Link href="/track" className="text-link underline">
+          Track an order
+        </Link>
+      </nav>
       <form action={signOut}>
         <Button type="submit" variant="outline" className="h-11 rounded-full">Sign out</Button>
       </form>

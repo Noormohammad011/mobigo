@@ -15,6 +15,7 @@ import { PrismaPg } from "@prisma/adapter-pg"
 
 import { PrismaClient, type NetworkType, type ProductStatus } from "../src/generated/prisma/client"
 import { classifyProduct } from "../src/lib/stock-rule"
+import { ensureSpecCatalog, upsertProductSpecs } from "./spec-sheet"
 
 const url = process.env.DIRECT_URL ?? process.env.DATABASE_URL ?? ""
 const host = (() => {
@@ -197,7 +198,20 @@ async function main() {
   await db.setting.deleteMany()
 
   const now = Date.now()
-  const created: { id: string; minPrice: number; maxSaving: number; releasedDaysAgo: number; status: ProductStatus }[] = []
+  const created: {
+    id: string
+    slug: string
+    minPrice: number
+    maxSaving: number
+    releasedDaysAgo: number
+    status: ProductStatus
+    displaySizeIn: number
+    batteryMah: number
+    chipsetBrand: string
+    network: NetworkType
+    ramOptionsGb: number[]
+    storageOptionsGb: number[]
+  }[] = []
 
   for (const [bi, b] of brands.entries()) {
     const brand = await db.brand.create({
@@ -283,7 +297,20 @@ async function main() {
         })),
       })
 
-      created.push({ id: product.id, minPrice, maxSaving, releasedDaysAgo: p.releasedDaysAgo, status })
+      created.push({
+        id: product.id,
+        slug,
+        minPrice,
+        maxSaving,
+        releasedDaysAgo: p.releasedDaysAgo,
+        status,
+        displaySizeIn: p.display,
+        batteryMah: p.battery,
+        chipsetBrand: p.chipset,
+        network: p.network,
+        ramOptionsGb: [...new Set(p.configs.map((c) => c[0]))].sort((a, z) => a - z),
+        storageOptionsGb: [...new Set(p.configs.map((c) => c[1]))].sort((a, z) => a - z),
+      })
     }
   }
 
@@ -395,6 +422,7 @@ async function main() {
       { key: "facebook_url", value: "https://facebook.com/" },
       { key: "youtube_url", value: "https://youtube.com/" },
       { key: "promo_modal_enabled", value: false },
+      { key: "order_max_subtotal", value: 300000 },
     ],
   })
 
@@ -403,6 +431,10 @@ async function main() {
     product_detail: true,
     search: true,
     cart: true,
+    cod_checkout: true,
+    order_tracking: true,
+    order_history: true,
+    wishlist: true,
     recently_viewed: true,
   }
   await db.setting.upsert({
@@ -417,6 +449,11 @@ async function main() {
       { name: "Jamuna Future Park", address: "Level 4, Jamuna Future Park, Kuril, Dhaka", phone: "09612-345680", hours: "10am – 9pm, closed Wednesday", sortOrder: 1 },
     ],
   })
+
+  const attrIds = await ensureSpecCatalog(db)
+  for (const product of created) {
+    await upsertProductSpecs(db, product, attrIds)
+  }
 
   console.log(
     `Seeded ${brands.length} brands, ${created.length} phones, ${shelves.length} shelves, ${hero.length + side.length} banners.`

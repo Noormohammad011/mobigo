@@ -28,11 +28,11 @@ _These are recommendations to keep your build orderly, not requirements. Skip an
 | 8 | Sitemap & robots | Slice 1: Browse | in-progress |
 | 9 | Recently viewed | Slice 2: Recently viewed | in-progress |
 | 10 | Cart | Slice 3: Buy | in-progress |
-| 11 | COD checkout | Slice 3: Buy | planned |
-| 12 | Order tracking | Slice 3: Buy | planned |
-| 13 | Order history | Slice 3: Buy | planned |
-| 14 | Wishlist | Slice 4: Wishlist | planned |
-| 15 | Full spec data | Slice 5: Compare | planned |
+| 11 | COD checkout | Slice 3: Buy | in-progress |
+| 12 | Order tracking | Slice 3: Buy | in-progress |
+| 13 | Order history | Slice 3: Buy | in-progress |
+| 14 | Wishlist | Slice 4: Wishlist | in-progress |
+| 15 | Full spec data | Slice 5: Compare | in-progress |
 | 16 | New spec columns | Slice 5: Compare | planned |
 | 17 | Compare | Slice 5: Compare | planned |
 | 18 | Admin catalog | Slice 6: Operate | planned |
@@ -176,36 +176,60 @@ Cart and checkout are built and shipped together.
 Spec [0010](../specs/0010-cart.md)
 assumed decision (spec 0010). code in `src/app/cart/`, `src/lib/cart/`, `src/components/cart/`
 
-### 11. COD checkout · needs a decision · GA
+### 11. COD checkout · in-progress · GA
 `/checkout` with Cash on Delivery only (PRD CO-1 to CO-4, CO-6). Places a `PENDING` order, reserves stock in one transaction, caps the order size, and never drops anything from the order without telling the shopper.
 **Done when:** a valid order reserves stock and shows the order number; prices and stock are read again on the server; an order over the cap is refused with a clear message; any line that changed or ran out is shown to the shopper before placing; max 3 pending orders per phone number.
-- [ ] Design it (spec): `/architect COD checkout`
+- [x] Design it (spec): `/architect COD checkout`
+- [x] Build it: `/develop COD checkout`
+- [x] Verify it: `/check verify COD checkout`
+- [x] Test it: `/test COD checkout`
+- [ ] Review it (fresh model): `/check review COD checkout`
+Spec [0011](../specs/0011-cod-checkout.md)
+code in `src/app/checkout/`, `src/lib/orders/`
 
-### 12. Order tracking · needs a decision
+### 12. Order tracking · in-progress
 Public `/track` with order number plus phone, no sign in (PRD A-5).
 **Done when:** the right number and phone pair shows the status timeline; a wrong pair reveals nothing about whether the order exists; lookups are rate limited.
 - [ ] Design it (spec): `/architect order tracking`
+- [x] Build it: `/develop order tracking`
+- [ ] Verify it: `/check verify order tracking`
+- [ ] Test it: `/test order tracking`
+Spec [0012](../specs/0012-order-tracking.md)
+assumed decision (spec 0012). code in `src/app/track/`
 
-### 13. Order history
+### 13. Order history · in-progress
 Order list and order detail with a status timeline in `/account` (PRD A-2).
 **Done when:** a signed in shopper sees only their own orders, newest first, and each detail shows items, totals and status history.
-- [ ] Build it: `/develop order history`
+- [x] Build it: `/develop order history`
+- [ ] Verify it: `/check verify order history`
+- [ ] Test it: `/test order history`
+Spec [0013](../specs/0013-order-history.md)
+assumed decision (spec 0013). code in `src/app/account/orders/`
 
 ## Slice 4: Wishlist
 
-### 14. Wishlist
+### 14. Wishlist · in-progress
 Signed in only, at `/account/wishlist`, with a heart on product cards and the product page.
 **Done when:** a signed in shopper can save and remove phones and see them at `/account/wishlist`; a guest tapping the heart is sent to sign in and returns to the same phone.
-- [ ] Build it: `/develop wishlist`
+- [x] Build it: `/develop wishlist`
+- [ ] Verify it: `/check verify wishlist`
+- [ ] Test it: `/test wishlist`
+Spec [0014](../specs/0014-wishlist.md)
+assumed decision (spec 0014). code in `src/app/account/wishlist/`, `src/components/wishlist/`
 
 ## Slice 5: Compare
 
 Built in this order: data first, then columns, then the page.
 
-### 15. Full spec data · needs a decision
+### 15. Full spec data · in-progress
 Full spec sheets for all 30 phones in the seed, plus a backfill script that loads the same specs into the hosted database safely.
 **Done when:** every seeded phone has every spec group filled; the backfill script can run twice with the same result, touches only spec rows, and refuses to run without an explicit target.
 - [ ] Design it (spec): `/architect full spec data`
+- [x] Build it: `/develop full spec data`
+- [ ] Verify it: `/check verify full spec data`
+- [ ] Test it: `/test full spec data`
+Spec [0015](../specs/0015-full-spec-data.md)
+assumed decision (spec 0015). code in `prisma/spec-sheet.ts`, `scripts/backfill-specs.ts`
 
 ### 16. New spec columns · needs a decision
 The two new spec columns agreed for Compare and filtering, added through a migration.

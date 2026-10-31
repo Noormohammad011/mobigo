@@ -1,6 +1,7 @@
 import "server-only";
 import { cache } from "react";
 import { notFound, redirect } from "next/navigation";
+import { connection } from "next/server";
 import type { Role, User } from "@/generated/prisma/client";
 import { db } from "@/lib/db";
 import { createClient } from "@/lib/supabase/server";
@@ -15,6 +16,7 @@ type Claims = {
 
 // Verified identity from the Supabase session (JWT signature checked by getClaims).
 export const getCurrentUser = cache(async (): Promise<User | null> => {
+  await connection();
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
   const claims = data?.claims as Claims | undefined;
