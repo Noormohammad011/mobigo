@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next"
+import { Suspense } from "react"
 import { Inter, Plus_Jakarta_Sans } from "next/font/google"
 
+import { BottomNavFallback } from "@/components/layout/bottom-nav-fallback"
 import { BottomNav } from "@/components/layout/bottom-nav"
 import { Footer } from "@/components/layout/footer"
 import { Header } from "@/components/layout/header"
@@ -47,7 +49,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             {children}
           </main>
           <Footer />
-          <BottomNav />
+          <Suspense fallback={<BottomNavFallback />}>
+            <BottomNav />
+          </Suspense>
           <WhatsAppButton />
         </TooltipProvider>
         <Toaster />

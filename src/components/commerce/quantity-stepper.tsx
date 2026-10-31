@@ -4,7 +4,7 @@ import { MinusIcon, PlusIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
-/** QuantityStepper (DESIGN_SYSTEM §7.9): 44px pill, − value +, min 1, max min(stock, 5). */
+/** QuantityStepper (DESIGN_SYSTEM §7.9): 44px pill. Maximum is min(stock, maxPerOrder), and 0 offers no quantity. */
 export function QuantityStepper({
   value,
   onValueChange,
@@ -18,7 +18,19 @@ export function QuantityStepper({
   maxPerOrder?: number
   className?: string
 }) {
-  const max = Math.max(1, Math.min(stock, maxPerOrder))
+  const max = Math.min(stock, maxPerOrder)
+  if (max < 1) {
+    return (
+      <div
+        role="group"
+        aria-label="Quantity"
+        aria-disabled="true"
+        className={cn("inline-flex h-11 items-center rounded-full border border-border-strong px-4 text-body-sm text-muted-foreground", className)}
+      >
+        Unavailable
+      </div>
+    )
+  }
   const btn =
     "grid size-11 place-items-center rounded-full text-foreground transition-colors duration-150 outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/40 disabled:pointer-events-none disabled:opacity-40 [&_svg]:size-4"
   return (

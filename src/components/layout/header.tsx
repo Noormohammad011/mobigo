@@ -1,14 +1,16 @@
 import { ArrowLeftRightIcon, BadgePercentIcon, UserIcon } from "lucide-react"
 import Link from "next/link"
+import { Suspense } from "react"
 
 import { Wordmark } from "@/components/brand/wordmark"
 import { getNavBrands } from "@/lib/queries/shell"
 
 import { CartLink } from "./cart-link"
+import { HeaderCartSlot } from "./header-cart-slot"
 import { HeaderIconLink } from "./header-icon-link"
 import { MobileMenu } from "./mobile-menu"
 import { BUDGET_BANDS, NAV_BRAND_LIMIT } from "./nav"
-import { SearchBar } from "./search-bar"
+import { SearchBarWithSuggestions } from "./search-bar-with-suggestions"
 
 const DESKTOP_LINKS = [
   { label: "Offers", href: "/offers", icon: BadgePercentIcon },
@@ -22,13 +24,14 @@ const DESKTOP_LINKS = [
  * The rows are siblings (not nested) so the mobile search row can stick to the viewport.
  */
 export async function Header() {
-  const brands = (await getNavBrands()).slice(0, NAV_BRAND_LIMIT)
+  const brands = await getNavBrands()
+  const navBrands = brands.slice(0, NAV_BRAND_LIMIT)
 
   return (
     <>
       <header className="bg-header text-header-foreground lg:sticky lg:top-0 lg:z-header">
         <div className="page-container flex h-14 items-center gap-1 md:h-16 md:gap-4">
-          <MobileMenu brands={brands} />
+          <MobileMenu brands={navBrands} />
           <Link
             href="/"
             aria-label="MobiGo home"
@@ -37,7 +40,7 @@ export async function Header() {
             <Wordmark className="text-[22px] md:text-2xl" />
           </Link>
 
-          <SearchBar id="search-desktop" className="hidden md:flex md:flex-1 lg:mx-4 lg:max-w-2xl" />
+          <SearchBarWithSuggestions id="search-desktop" className="hidden md:flex md:flex-1 lg:mx-4 lg:max-w-2xl" />
 
           <nav aria-label="Shortcuts" className="ml-auto hidden items-center gap-1 lg:flex">
             {DESKTOP_LINKS.map(({ label, href, icon: Icon }) => (
@@ -53,7 +56,9 @@ export async function Header() {
           </nav>
 
           <div className="ml-auto flex items-center gap-1 md:ml-0">
-            <CartLink />
+            <Suspense fallback={<CartLink />}>
+              <HeaderCartSlot />
+            </Suspense>
             <HeaderIconLink href="/account" aria-label="My account" className="hidden lg:inline-flex">
               <UserIcon strokeWidth={1.75} aria-hidden="true" />
             </HeaderIconLink>
@@ -62,7 +67,7 @@ export async function Header() {
       </header>
 
       <div className="sticky top-0 z-header bg-header px-4 pt-1 pb-3 shadow-md md:hidden">
-        <SearchBar id="search-mobile" />
+        <SearchBarWithSuggestions id="search-mobile" />
       </div>
 
       <nav aria-label="Brands and budgets" className="hidden border-b border-border bg-background lg:block">
@@ -70,7 +75,7 @@ export async function Header() {
           <Link href="/phones" className={brandNavLink}>
             All phones
           </Link>
-          {brands.map((brand) => (
+          {navBrands.map((brand) => (
             <Link key={brand.slug} href={`/brands/${brand.slug}`} className={brandNavLink}>
               {brand.name}
             </Link>

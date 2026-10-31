@@ -18,16 +18,16 @@ _These are recommendations to keep your build orderly, not requirements. Skip an
 | E | Global shell | Foundation | existing |
 | F | Auth & account basics | Foundation | existing |
 | G | Home page | Foundation | existing |
-| 1 | Test setup | Foundation | planned |
-| 2 | Feature flags | Foundation | planned |
-| 3 | Analytics | Foundation | planned |
-| 4 | Available stock rule | Slice 1: Browse | planned |
-| 5 | Product listing | Slice 1: Browse | planned |
-| 6 | Product detail page | Slice 1: Browse | planned |
-| 7 | Search | Slice 1: Browse | planned |
-| 8 | Sitemap & robots | Slice 1: Browse | planned |
-| 9 | Recently viewed | Slice 2: Recently viewed | planned |
-| 10 | Cart | Slice 3: Buy | planned |
+| 1 | Test setup | Foundation | in-progress |
+| 2 | Feature flags | Foundation | in-progress |
+| 3 | Analytics | Foundation | in-progress |
+| 4 | Available stock rule | Slice 1: Browse | in-progress |
+| 5 | Product listing | Slice 1: Browse | in-progress |
+| 6 | Product detail page | Slice 1: Browse | in-progress |
+| 7 | Search | Slice 1: Browse | in-progress |
+| 8 | Sitemap & robots | Slice 1: Browse | in-progress |
+| 9 | Recently viewed | Slice 2: Recently viewed | in-progress |
+| 10 | Cart | Slice 3: Buy | in-progress |
 | 11 | COD checkout | Slice 3: Buy | planned |
 | 12 | Order tracking | Slice 3: Buy | planned |
 | 13 | Order history | Slice 3: Buy | planned |
@@ -65,63 +65,116 @@ Hero carousel, trust strip, brand grid, curated shelves with brand chips, budget
 
 ## Foundations
 
-### 1. Test setup · needs a decision
+### 1. Test setup · in-progress
 Unit and component tests plus browser end to end tests, so every later slice can be proven. Tests run against a real Postgres from the real migrations.
 **Done when:** `pnpm test` and `pnpm test:e2e` run locally, one sample test passes in each, and an end to end test can open the home page against seeded data.
-- [ ] Design it (spec): `/architect test setup`
+- [x] Design it (spec): `/architect test setup`
+- [ ] Build it: `/develop test setup`
+   - [x] Vitest unit and component projects with Next shims (AC-1, AC-5)
+   - [x] Test database: rollback proxy, savepoints, guard, race project (AC-2, AC-3, AC-4, AC-10)
+   - [x] Isolated e2e build: own build folder and port, local Supabase, env allowlist and hosted ref scan (AC-6, AC-9, AC-10, AC-11)
+   - [x] E2E fixtures: axe scan, signed in worker users with cleanup (AC-7, AC-8)
+- [ ] Verify it: `/check verify test setup`
+- [ ] Test it: `/test test setup`
+Spec [0001](../specs/0001-test-setup.md)
+code in `vitest.config.ts`, `playwright.config.ts`, `scripts/e2e.ts`, `src/test/`
 
-### 2. Feature flags · needs a decision
+### 2. Feature flags · in-progress
 One on/off flag per feature, so an unfinished or risky feature can ship dark and be switched on without a deploy.
 **Done when:** every planned feature below has a named flag, a page or action behind an off flag is unreachable (404 or hidden), and flags can be read on the server.
 - [ ] Design it (spec): `/architect feature flags`
+- [x] Build it: `/develop feature flags`
+- [ ] Verify it: `/check verify feature flags`
+- [ ] Test it: `/test feature flags`
+Spec [0003](../specs/0003-feature-flags.md)
+assumed decision (spec 0003). code in `src/lib/flags.ts`
 
-### 3. Analytics · needs a decision
+### 3. Analytics · in-progress
 A privacy friendly analytics tool that records the agreed event list (page view, product view, add to cart, checkout start, order placed, plus any events added during design).
 **Done when:** each agreed event fires once with its agreed properties, no personal data is sent, and events are visible in the tool's dashboard.
 - [ ] Design it (spec): `/architect analytics`
+- [ ] Build it: `/develop analytics`
+- [ ] Verify it: `/check verify analytics`
+- [ ] Test it: `/test analytics`
+Spec [0004](../specs/0004-analytics.md)
+assumed decision (spec 0004). code in `src/lib/analytics.ts`. The call exists and sends nothing until a provider is chosen.
 
 ## Slice 1: Browse
 
-### 4. Available stock rule · needs a decision
+### 4. Available stock rule · in-progress
 One shared rule for what a shopper can buy: stock minus reserved stock. Listing, product page, cart and checkout all read it from one place, so they never disagree.
-**Done when:** a single server function returns available stock per variant, every "in stock" badge, quantity cap and checkout check uses it, and a test proves reserved units are not sold twice.
-- [ ] Design it (spec): `/architect available stock rule`
+**Done when:** one server read returns available stock per variant and per product, the quantity stepper uses that cap, and the seed sets the in stock flag with the same rule. The test that two shoppers cannot buy the last unit belongs to checkout.
+- [x] Design it (spec): `/architect available stock rule`
+- [ ] Build it: `/develop available stock rule`
+   - [ ] Pure rule and unit tests (AC-2, AC-3, AC-4, AC-5, AC-11)
+   - [ ] Server reads and database tests (AC-1, AC-5, AC-6, AC-7, AC-8, AC-10)
+   - [x] Stepper and seed (AC-6, AC-9)
+- [ ] Verify it: `/check verify available stock rule`
+- [ ] Test it: `/test available stock rule`
+Spec [0002](../specs/0002-available-stock-rule.md)
+code in `src/lib/stock-rule.ts`, `src/lib/stock.ts`, `src/components/commerce/quantity-stepper.tsx`
 
-### 5. Product listing · needs a decision
+### 5. Product listing · in-progress
 `/phones`, `/brands/[slug]` and `/collections/[slug]` share one listing with filters, sort and pagination (PRD L-1 to L-7). Home budget tiles and shelf "View all" links land here.
 **Done when:** filters and sort live in the URL and survive back and share; the grid matches L-2 at every breakpoint; "Load more" on mobile, numbered pages on desktop; empty state offers "Clear filters"; pages are server rendered with canonical URLs.
 - [ ] Design it (spec): `/architect product listing`
+- [x] Build it: `/develop product listing`
+- [ ] Verify it: `/check verify product listing`
+- [ ] Test it: `/test product listing`
+Spec [0005](../specs/0005-product-listing.md)
+assumed decision (spec 0005). code in `src/app/phones/page.tsx`, `src/app/brands/[slug]/page.tsx`, `src/app/collections/[slug]/page.tsx`
 
-### 6. Product detail page · needs a decision
+### 6. Product detail page · in-progress
 `/phones/[slug]` with gallery per colour, price block, and a variant picker that exposes the chosen variant (to the buy buttons, the URL and the price) (PRD P-1 to P-6, P-9 related phones, P-11).
 **Done when:** picking colour and storage updates price, stock, SKU and gallery; unavailable combinations are disabled; the chosen variant is shareable by URL; the sticky mobile buy bar knows the chosen variant; Product JSON-LD with offers is valid.
 - [ ] Design it (spec): `/architect product detail page`
+- [x] Build it: `/develop product detail page`
+- [ ] Verify it: `/check verify product detail page`
+- [ ] Test it: `/test product detail page`
+Spec [0006](../specs/0006-product-detail.md)
+assumed decision (spec 0006). code in `src/app/phones/[slug]/page.tsx`, `src/lib/queries/product-detail.ts`, `src/components/product/`
 
-### 7. Search · needs a decision
+### 7. Search · in-progress
 `/search?q=` results on the shared listing, plus live suggestions in the header search box (PRD G-5).
 **Done when:** results rank by relevance with typo tolerance; suggestions show thumbnail, name and price after a 250ms pause; Enter goes to the results page; search still works without JavaScript.
 - [ ] Design it (spec): `/architect search`
+- [x] Build it: `/develop search`
+- [ ] Verify it: `/check verify search`
+- [ ] Test it: `/test search`
+Spec [0007](../specs/0007-search.md)
+assumed decision (spec 0007). code in `src/app/search/page.tsx`, `src/lib/queries/search.ts`, `src/components/layout/search-bar-with-suggestions.tsx`
 
-### 8. Sitemap & robots
+### 8. Sitemap & robots · in-progress
 `sitemap.xml` and `robots.txt` covering home, listings, brands, collections and every product page.
 **Done when:** the sitemap lists every live product and brand URL with no noindex pages, and robots points to it.
-- [ ] Build it: `/develop sitemap & robots`
+- [x] Build it: `/develop sitemap & robots`
+- [ ] Verify it: `/check verify sitemap & robots`
+- [ ] Test it: `/test sitemap & robots`
+code in `src/app/sitemap.ts`, `src/app/robots.ts`
 
 ## Slice 2: Recently viewed
 
-### 9. Recently viewed
+### 9. Recently viewed · in-progress
 A "Recently viewed" row on the product page only, kept in the browser, with no schema change.
 **Done when:** the last few phones a shopper opened show on the product page (never the current one), it survives a reload, and an empty or broken store hides the row.
-- [ ] Build it: `/develop recently viewed`
+- [x] Build it: `/develop recently viewed`
+- [ ] Verify it: `/check verify recently viewed`
+- [ ] Test it: `/test recently viewed`
+code in `src/lib/recently-viewed.ts`, `src/components/product/recently-viewed.tsx`
 
 ## Slice 3: Buy
 
 Cart and checkout are built and shipped together.
 
-### 10. Cart · needs a decision · GA
+### 10. Cart · in-progress · GA
 `/cart` for guests and signed in shoppers. Guest cart merges into the server cart after sign in; each cart line stores the price the shopper saw; every line shows a clear status (ok, price changed, low stock, out of stock).
 **Done when:** a guest cart merges on sign in without losing or doubling lines; a line whose price moved since it was added says so; quantity never exceeds available stock (4); totals match the server.
 - [ ] Design it (spec): `/architect cart`
+- [x] Build it: `/develop cart`
+- [ ] Verify it: `/check verify cart`
+- [ ] Test it: `/test cart`
+Spec [0010](../specs/0010-cart.md)
+assumed decision (spec 0010). code in `src/app/cart/`, `src/lib/cart/`, `src/components/cart/`
 
 ### 11. COD checkout · needs a decision · GA
 `/checkout` with Cash on Delivery only (PRD CO-1 to CO-4, CO-6). Places a `PENDING` order, reserves stock in one transaction, caps the order size, and never drops anything from the order without telling the shopper.
@@ -195,6 +248,7 @@ Out of scope for the current build pass, kept so the plan stays honest.
 - **Admin dashboard** (AD-1)
 - **Promo modal** (G-8)
 - **Coupons** (CA-4) · needs a decision
+- **Hosted CI for tests**: run `pnpm test` and `pnpm test:e2e` on every push once the repo has a git remote · from spec 0001
 
 ## Legend
 

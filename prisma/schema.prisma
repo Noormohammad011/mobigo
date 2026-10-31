@@ -383,6 +383,7 @@ model CartItem {
   cartId    String
   variantId String
   quantity  Int      // 1..5
+  unitPrice Int      // BDT when the line was added
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @updatedAt @db.Timestamptz(3)
 

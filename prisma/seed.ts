@@ -14,6 +14,7 @@ import { join } from "node:path"
 import { PrismaPg } from "@prisma/adapter-pg"
 
 import { PrismaClient, type NetworkType, type ProductStatus } from "../src/generated/prisma/client"
+import { classifyProduct } from "../src/lib/stock-rule"
 
 const url = process.env.DIRECT_URL ?? process.env.DATABASE_URL ?? ""
 const host = (() => {
@@ -241,7 +242,10 @@ async function main() {
           minPrice,
           maxPrice,
           maxSaving,
-          inStock: variants.some((v) => v.stock > 0),
+          inStock: classifyProduct({
+            status,
+            variants: variants.map((variant) => ({ stock: variant.stock, reservedStock: 0, isActive: true })),
+          }).inStock,
           network: p.network,
           displaySizeIn: p.display,
           batteryMah: p.battery,
@@ -392,6 +396,19 @@ async function main() {
       { key: "youtube_url", value: "https://youtube.com/" },
       { key: "promo_modal_enabled", value: false },
     ],
+  })
+
+  const browseFlags = {
+    product_listing: true,
+    product_detail: true,
+    search: true,
+    cart: true,
+    recently_viewed: true,
+  }
+  await db.setting.upsert({
+    where: { key: "feature_flags" },
+    create: { key: "feature_flags", value: browseFlags },
+    update: { value: browseFlags },
   })
 
   await db.outlet.createMany({
