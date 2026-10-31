@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 820" width="1920" height="820">
+<defs><linearGradient id="b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#16161f"/><stop offset="1" stop-color="#e3793f"/></linearGradient></defs>
+<rect width="1920" height="820" fill="url(#b)"/>
+<circle cx="1574.3999999999999" cy="410" r="344.4" fill="#ffb27a" opacity=".35"/>
+<rect x="1440" y="114.80000000000001" width="278.8" height="590.4" rx="41" fill="#0b0b12" opacity=".55"/>
+<text x="134.4" y="377.2" font-family="Plus Jakarta Sans, Arial, sans-serif" font-weight="800" font-size="92" fill="#fff">iPhone 17 series</text>
+<text x="134.4" y="464.59999999999997" font-family="Inter, Arial, sans-serif" font-weight="500" font-size="38.64" fill="#dde1ff">Official warranty · In stock now</text>
+</svg>

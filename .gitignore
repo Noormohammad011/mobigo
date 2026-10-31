@@ -1,0 +1,83 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+!.env.example
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+src/generated/
+
+# ── secrets & critical files ──
+.env*.local
+*.key
+*.crt
+*.cer
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.der
+id_rsa*
+id_ed25519*
+*.gpg
+secrets/
+*secret*.json
+*credentials*.json
+service-account*.json
+client_secret*.json
+token.json
+.npmrc
+.netrc
+.htpasswd
+
+# local databases & dumps
+*.sqlite
+*.sqlite3
+*.db
+*.dump
+*.sql.gz
+backup*.sql
+
+# logs & local tooling
+*.log
+logs/
+.claude/settings.local.json
+.vscode/*
+!.vscode/extensions.json
+.idea/
+graphify-out/
