@@ -20,7 +20,7 @@ export const ComparePill = ({ enabled }: { enabled: boolean }) => {
       href={`/compare${compareSlugsToSearch(slugs)}`}
       className={cn(
         "fixed right-4 z-float inline-flex h-11 items-center rounded-full bg-primary px-4 text-body-sm font-semibold text-primary-foreground shadow-md",
-        "bottom-[calc(64px+env(safe-area-inset-bottom)+12px)] lg:bottom-6"
+        "bottom-[calc(var(--bottom-chrome,64px)+env(safe-area-inset-bottom)+12px)] lg:bottom-6"
       )}
     >
       Compare ({slugs.length})

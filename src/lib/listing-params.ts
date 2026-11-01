@@ -9,88 +9,106 @@ export type DisplayBand = (typeof DISPLAY_BANDS)[number]
 export const BATTERY_BANDS = ["under4000", "4000to5000", "over5000"] as const
 export type BatteryBand = (typeof BATTERY_BANDS)[number]
 
+export const AVAILABILITIES = ["in_stock", "preorder"] as const
+export type Availability = (typeof AVAILABILITIES)[number]
+
+export const NETWORKS = ["G4", "G5"] as const
+export type Network = (typeof NETWORKS)[number]
+
+/** Common option sets for the checkbox filters. */
+export const RAM_OPTIONS_GB = [2, 3, 4, 6, 8, 12, 16] as const
+export const STORAGE_OPTIONS_GB = [32, 64, 128, 256, 512, 1024] as const
+export const PRICE_SLIDER = { min: 0, max: 200_000, step: 1_000 } as const
+
+/** Every list filter accepts several values (OR inside a group, AND across groups). */
 export type ListingQuery = {
-  brandSlug?: string
+  brandSlugs: string[]
   minPrice?: number
   maxPrice?: number
-  ram?: number
-  storage?: number
-  network?: "G4" | "G5"
-  display?: DisplayBand
-  battery?: BatteryBand
-  chipset?: string
-  availability?: "in_stock" | "preorder"
+  rams: number[]
+  storages: number[]
+  networks: Network[]
+  displays: DisplayBand[]
+  batteries: BatteryBand[]
+  chipsets: string[]
+  availabilities: Availability[]
   sort: ListingSort
   page: number
   productIds?: string[]
   searchQ?: string
 }
 
-const oneOf = <T extends string>(value: string | null, allowed: readonly T[]): T | undefined =>
+type RawInput = Record<string, string | string[] | undefined>
+
+const many = (input: RawInput, key: string): string[] => {
+  const value = input[key]
+  const list = Array.isArray(value) ? value : value ? [value] : []
+  return [...new Set(list.map((v) => v.trim()).filter(Boolean))].slice(0, 20)
+}
+
+const oneOf = <T extends string>(value: string | undefined, allowed: readonly T[]): T | undefined =>
   value && (allowed as readonly string[]).includes(value) ? (value as T) : undefined
 
-const whole = (value: string | null): number | undefined => {
+const allOf = <T extends string>(values: string[], allowed: readonly T[]): T[] =>
+  values.filter((v): v is T => (allowed as readonly string[]).includes(v))
+
+const wholeNumber = (value: string | undefined): number | undefined => {
   if (!value) return undefined
   const parsed = Number(value)
   if (!Number.isInteger(parsed) || parsed < 0) return undefined
   return parsed
 }
 
-export const parseListingQuery = (
-  input: Record<string, string | string[] | undefined>,
-  fixed?: { brandSlug?: string }
-): ListingQuery => {
-  const get = (key: string) => {
-    const value = input[key]
-    return typeof value === "string" ? value : undefined
-  }
-  const networkRaw = get("network")
-  const page = whole(get("page") ?? null) ?? 1
+const wholeNumbers = (values: string[]): number[] =>
+  values.map((v) => wholeNumber(v)).filter((n): n is number => n != null)
+
+export const parseListingQuery = (input: RawInput, fixed?: { brandSlug?: string }): ListingQuery => {
+  const first = (key: string) => many(input, key)[0]
   return {
-    brandSlug: fixed?.brandSlug ?? (get("brand") || undefined),
-    minPrice: whole(get("min") ?? null),
-    maxPrice: whole(get("max") ?? null),
-    ram: whole(get("ram") ?? null),
-    storage: whole(get("storage") ?? null),
-    network: networkRaw === "4g" ? "G4" : networkRaw === "5g" ? "G5" : undefined,
-    display: oneOf(get("display") ?? null, DISPLAY_BANDS),
-    battery: oneOf(get("battery") ?? null, BATTERY_BANDS),
-    chipset: get("chipset")?.trim().slice(0, 40) || undefined,
-    availability: oneOf(get("availability") ?? null, ["in_stock", "preorder"] as const),
-    sort: oneOf(get("sort") ?? null, LISTING_SORTS) ?? "relevance",
-    page: Math.max(1, page),
-    searchQ: get("q") || undefined,
+    brandSlugs: fixed?.brandSlug ? [fixed.brandSlug] : many(input, "brand"),
+    minPrice: wholeNumber(first("min")),
+    maxPrice: wholeNumber(first("max")),
+    rams: wholeNumbers(many(input, "ram")),
+    storages: wholeNumbers(many(input, "storage")),
+    networks: many(input, "network").flatMap((v) => (v === "4g" ? ["G4" as const] : v === "5g" ? ["G5" as const] : [])),
+    displays: allOf(many(input, "display"), DISPLAY_BANDS),
+    batteries: allOf(many(input, "battery"), BATTERY_BANDS),
+    chipsets: many(input, "chipset").map((v) => v.slice(0, 40)),
+    availabilities: allOf(many(input, "availability"), AVAILABILITIES),
+    sort: oneOf(first("sort"), LISTING_SORTS) ?? "relevance",
+    page: Math.max(1, wholeNumber(first("page")) ?? 1),
+    searchQ: first("q"),
   }
 }
 
-export const listingHasFilters = (query: ListingQuery, fixedBrand?: string): boolean =>
-  Boolean(
-    (!fixedBrand && query.brandSlug) ||
-      query.minPrice != null ||
-      query.maxPrice != null ||
-      query.ram != null ||
-      query.storage != null ||
-      query.network ||
-      query.display ||
-      query.battery ||
-      query.chipset ||
-      query.availability ||
-      query.sort !== "relevance"
-  )
+/** How many filters are active (a price range counts once). Sort and search are not filters. */
+export const countActiveFilters = (query: ListingQuery, fixedBrand = false): number =>
+  (fixedBrand ? 0 : query.brandSlugs.length) +
+  (query.minPrice != null || query.maxPrice != null ? 1 : 0) +
+  query.rams.length +
+  query.storages.length +
+  query.networks.length +
+  query.displays.length +
+  query.batteries.length +
+  query.chipsets.length +
+  query.availabilities.length
+
+export const listingHasFilters = (query: ListingQuery, fixedBrand = false): boolean =>
+  countActiveFilters(query, fixedBrand) > 0 || query.sort !== "relevance"
 
 /** Query string for links. Page is omitted on page 1. */
 export const toListingSearch = (query: ListingQuery, page = query.page): string => {
   const params = new URLSearchParams()
-  if (query.brandSlug) params.set("brand", query.brandSlug)
+  query.brandSlugs.forEach((v) => params.append("brand", v))
   if (query.minPrice != null) params.set("min", String(query.minPrice))
   if (query.maxPrice != null) params.set("max", String(query.maxPrice))
-  if (query.ram != null) params.set("ram", String(query.ram))
-  if (query.storage != null) params.set("storage", String(query.storage))
-  if (query.network) params.set("network", query.network === "G5" ? "5g" : "4g")
-  if (query.display) params.set("display", query.display)
-  if (query.battery) params.set("battery", query.battery)
-  if (query.chipset) params.set("chipset", query.chipset)
-  if (query.availability) params.set("availability", query.availability)
+  query.rams.forEach((v) => params.append("ram", String(v)))
+  query.storages.forEach((v) => params.append("storage", String(v)))
+  query.networks.forEach((v) => params.append("network", v === "G5" ? "5g" : "4g"))
+  query.displays.forEach((v) => params.append("display", v))
+  query.batteries.forEach((v) => params.append("battery", v))
+  query.chipsets.forEach((v) => params.append("chipset", v))
+  query.availabilities.forEach((v) => params.append("availability", v))
   if (query.searchQ) params.set("q", query.searchQ)
   if (query.sort !== "relevance") params.set("sort", query.sort)
   if (page > 1) params.set("page", String(page))

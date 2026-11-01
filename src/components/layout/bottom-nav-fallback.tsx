@@ -12,7 +12,7 @@ const tabs = [
 
 /** Same chrome as BottomNav before pathname is available. All tabs use inactive styling. */
 export const BottomNavFallback = () => (
-  <nav
+  <nav data-bottom-nav
     aria-label="Main"
     aria-busy="true"
     className="fixed inset-x-0 bottom-0 z-bar border-t border-border bg-background pb-safe shadow-bar lg:hidden"

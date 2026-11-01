@@ -4,7 +4,12 @@ All changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-- Add admin settings, delivery zones, outlets, and CMS pages for footer content (by Noormohammad011, 2026-10-31)
+- Refine home product shelves to three columns and flat shelf cards without heavy shadows (by Noormohammad011, 2026-11-01)
+- Polish phone listing filters and flat product cards without lift or stage shadows (by Noormohammad011, 2026-11-01)
+- Replace native selects with FormSelect and align date fields with DateInput (by Noormohammad011, 2026-11-01)
+- Fix compare last-item remove and drop duplicate footer theme switcher (by Noormohammad011, 2026-11-01)
+- Use single-column phone listing grid on mobile viewports (by Noormohammad011, 2026-11-01)
+- Cap listing grid at three columns and fix filter sidebar scroll (by Noormohammad011, 2026-11-01)
 - Add admin orders with transitionOrder, stock side effects, and COD mark paid (by Noormohammad011, 2026-10-31)
 - Add admin merchandising for collections, shelf order, and banners with home cache revalidation (by Noormohammad011, 2026-10-31)
 - Add staff admin catalog for brands, products, specs, variants, and image upload (by Noormohammad011, 2026-10-31)

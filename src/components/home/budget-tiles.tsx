@@ -22,9 +22,9 @@ export function BudgetTiles() {
           <li key={b.query} className={i === bands.length - 1 ? "col-span-2 sm:col-span-1" : undefined}>
             <Link
               href={`/phones?${b.query}`}
-              className="group flex h-full flex-col gap-1 rounded-lg border border-border bg-card p-4 outline-none transition-[border-color,box-shadow] duration-150 ease-brand hover:border-primary hover:shadow-md focus-visible:ring-3 focus-visible:ring-ring/40"
+              className="group lift flex h-full flex-col gap-2 rounded-xl border border-border bg-card p-4 outline-none hover:border-primary focus-visible:ring-3 focus-visible:ring-ring/40 lg:p-5"
             >
-              <span className="font-price text-price text-foreground">{b.label}</span>
+              <span className="font-price text-price-lg tracking-[-0.02em] text-foreground">{b.label}</span>
               <span className="flex items-center justify-between gap-2 text-caption text-muted-foreground">
                 {b.hint}
                 <ArrowRightIcon

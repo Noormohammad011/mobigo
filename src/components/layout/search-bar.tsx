@@ -21,7 +21,7 @@ export function SearchBar({ id, className }: { id: string; className?: string })
         autoComplete="off"
         enterKeyHint="search"
         placeholder="Search phones, brands…"
-        className="h-11 w-full min-w-0 rounded-full border border-transparent bg-background pr-12 pl-4 text-body-sm text-foreground transition-shadow duration-150 ease-brand outline-none placeholder:text-muted-foreground focus-visible:ring-3 focus-visible:ring-primary-400 [&::-webkit-search-cancel-button]:hidden"
+        className="h-11 w-full min-w-0 rounded-full border border-transparent bg-background pr-12 dark:border-ink-700 dark:bg-ink-900 pl-4 text-body-sm text-foreground transition-shadow duration-150 ease-brand outline-none placeholder:text-muted-foreground focus-visible:ring-3 focus-visible:ring-primary-400 [&::-webkit-search-cancel-button]:hidden"
       />
       <button
         type="submit"

@@ -1,17 +1,18 @@
 "use client"
 
 import Image from "next/image"
-import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useMemo, useState, useTransition } from "react"
+import { BanknoteIcon, PhoneCallIcon } from "lucide-react"
+import { toast } from "sonner"
 
 import { addToCartAction } from "@/app/cart/actions"
-import { Price } from "@/components/commerce/price-block"
+import { PriceBlock } from "@/components/commerce/price-block"
 import { QuantityStepper } from "@/components/commerce/quantity-stepper"
 import { Badge } from "@/components/ui/badge"
 import { CompareToggle } from "@/components/compare/compare-toggle"
 import { WishlistHeart } from "@/components/wishlist/wishlist-heart"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { Button } from "@/components/ui/button"
 import { addGuestLine } from "@/lib/cart/guest-cart"
 import type { ProductDetailPayload } from "@/lib/queries/product-detail"
 import { quantityAllowed, type VariantAvailability } from "@/lib/stock-rule"
@@ -45,6 +46,7 @@ export const ProductPurchase = ({
   const searchParams = useSearchParams()
   const [pending, startTransition] = useTransition()
   const [quantity, setQuantity] = useState(1)
+  const [pendingAction, setPendingAction] = useState<"buy" | "cart" | null>(null)
 
   const selected = useMemo(() => pickVariant(product, searchParams.get("variant")), [product, searchParams])
   const availability: VariantAvailability | undefined = selected ? product.availability[selected.id] : undefined
@@ -63,35 +65,79 @@ export const ProductPurchase = ({
     if (match) setVariant(match.id)
   }
 
-  const handleAdd = () => {
-    if (!selected || !availability || !canBuy) return
-    const variantLabel = `${storageLabel(selected.storageGb)} / ${selected.ramGb}GB RAM`
-    const imageUrl = color?.images[0]?.url ?? null
-    if (!signedIn) {
-      addGuestLine({
-        variantId: selected.id,
-        quantity,
-        unitPrice: selected.price,
-        productName: product.name,
-        productSlug: product.slug,
-        variantLabel,
-        imageUrl,
-      })
-      router.push("/cart")
-      return
+  const canBuy = selected && availability && quantityAllowed(availability.reason, availability.maxQuantity, quantity)
+  const busy = pending || pendingAction !== null
+
+  /**
+   * Adds the selected variant × quantity to the right cart (guest localStorage or
+   * server). Returns true on success; on failure it tells the shopper why and
+   * returns false, so callers never navigate on a failed add.
+   */
+  const addSelected = async (): Promise<boolean> => {
+    if (!selected || !availability || !canBuy) return false
+    const guestLine = {
+      variantId: selected.id,
+      quantity,
+      unitPrice: selected.price,
+      productName: product.name,
+      productSlug: product.slug,
+      variantLabel: `${storageLabel(selected.storageGb)} / ${selected.ramGb}GB RAM`,
+      imageUrl: color?.images[0]?.url ?? null,
     }
-    startTransition(async () => {
+    if (!signedIn) {
+      addGuestLine(guestLine)
+      return true
+    }
+    try {
       const result = await addToCartAction({ variantId: selected.id, quantity, unitPrice: selected.price })
-      if (result.ok) router.push("/cart")
+      if (result.ok) return true
+      if (result.reason === "guest") {
+        // Session expired since the page loaded: keep the phone in the guest cart.
+        addGuestLine(guestLine)
+        return true
+      }
+      toast.error("Not enough stock for that quantity", {
+        description: "Lower the quantity or pick another colour or storage.",
+      })
+      return false
+    } catch {
+      toast.error("Couldn't add this phone", {
+        description: "Check your connection and try again.",
+      })
+      return false
+    }
+  }
+
+  const handleBuyNow = () => {
+    setPendingAction("buy")
+    startTransition(async () => {
+      const ok = await addSelected()
+      if (ok) {
+        router.push("/checkout")
+      } else {
+        setPendingAction(null)
+      }
     })
   }
 
-  const canBuy = selected && availability && quantityAllowed(availability.reason, availability.maxQuantity, quantity)
+  const handleAddToCart = () => {
+    setPendingAction("cart")
+    startTransition(async () => {
+      const ok = await addSelected()
+      setPendingAction(null)
+      if (!ok) return
+      router.refresh() // updates the signed-in header badge; guest badge listens for mobigo-cart-updated
+      toast.success("Added to cart", {
+        description: `${product.name} · ${quantity === 1 ? "1 phone" : `${quantity} phones`}`,
+        action: { label: "View cart", onClick: () => router.push("/cart") },
+      })
+    })
+  }
 
   return (
     <div className="flex flex-col gap-8 lg:grid lg:grid-cols-2 lg:gap-10">
       <div className="flex flex-col gap-3">
-        <div className="relative aspect-square overflow-hidden rounded-lg border border-border bg-white">
+        <div className="product-stage relative aspect-square overflow-hidden rounded-xl border border-border shadow-xs">
           {color?.images[0] ? (
             <Image
               src={color.images[0].url}
@@ -100,7 +146,7 @@ export const ProductPurchase = ({
               height={800}
               priority
               unoptimized={color.images[0].url.endsWith(".svg")}
-              className="size-full object-contain"
+              className="size-full object-contain p-6 mix-blend-multiply lg:p-10"
             />
           ) : (
             <div className="size-full bg-skeleton" />
@@ -109,7 +155,7 @@ export const ProductPurchase = ({
         {color && color.images.length > 1 ? (
           <ul className="flex gap-2 overflow-x-auto pb-1">
             {color.images.map((image) => (
-              <li key={image.url} className="size-16 shrink-0 overflow-hidden rounded-sm border border-border bg-white">
+              <li key={image.url} className="size-16 shrink-0 overflow-hidden rounded-md border border-border product-stage">
                 <Image src={image.url} alt="" width={64} height={64} unoptimized={image.url.endsWith(".svg")} className="size-full object-contain" />
               </li>
             ))}
@@ -117,12 +163,12 @@ export const ProductPurchase = ({
         ) : null}
       </div>
 
-      <div className="flex flex-col gap-6" id="buy">
+      <div className="flex flex-col gap-6 lg:sticky lg:top-24 lg:self-start" id="buy">
         <div className="flex items-start justify-between gap-3">
           <div>
             <p className="text-body-sm text-muted-foreground">{product.brandName}</p>
-            <h1 className="font-display text-h1 text-foreground">{product.name}</h1>
-            {selected ? <Price price={selected.price} compareAtPrice={selected.compareAtPrice} className="mt-3" /> : null}
+            <h1 className="font-display text-h1 tracking-[-0.02em] text-foreground lg:text-display">{product.name}</h1>
+            {selected ? <PriceBlock price={selected.price} compareAtPrice={selected.compareAtPrice} className="mt-3" /> : null}
           </div>
           <div className="flex items-start gap-2">
             <WishlistHeart productId={product.id} productSlug={product.slug} initialSaved={wishlisted} />
@@ -146,8 +192,8 @@ export const ProductPurchase = ({
                     if (next) setVariant(next.id)
                   }}
                   className={cn(
-                    "inline-flex items-center gap-2 rounded-full border px-3 py-2 text-body-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/40 disabled:cursor-not-allowed disabled:opacity-40",
-                    active ? "border-primary bg-primary/10" : "border-border-strong"
+                    "inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border px-4 py-2 text-body-sm transition-colors duration-150 ease-brand outline-none focus-visible:ring-3 focus-visible:ring-ring/40 disabled:cursor-not-allowed disabled:opacity-40",
+                    active ? "border-primary bg-primary/10 font-semibold text-foreground ring-1 ring-primary" : "border-border-strong hover:border-foreground/40"
                   )}
                 >
                   <span className="size-4 rounded-full border border-border-strong" style={{ backgroundColor: entry.hex }} aria-hidden="true" />
@@ -172,8 +218,8 @@ export const ProductPurchase = ({
                     disabled={!enabled}
                     onClick={() => selectCombo(selected?.colorId ?? product.colors[0]?.id ?? "", ram, storage)}
                     className={cn(
-                      "rounded-full border px-3 py-2 text-body-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/40 disabled:line-through disabled:opacity-40",
-                      active ? "border-primary bg-primary/10" : "border-border-strong"
+                      "min-h-11 cursor-pointer rounded-full border px-4 py-2 text-body-sm transition-colors duration-150 ease-brand outline-none focus-visible:ring-3 focus-visible:ring-ring/40 disabled:line-through disabled:opacity-40",
+                      active ? "border-primary bg-primary/10 font-semibold text-foreground ring-1 ring-primary" : "border-border-strong hover:border-foreground/40"
                     )}
                   >
                     {storageLabel(storage)} / {ram}GB
@@ -205,22 +251,33 @@ export const ProductPurchase = ({
         </div>
 
         <div className="hidden gap-3 lg:flex">
-          <Button type="button" className="flex-1" disabled={!canBuy || pending} onClick={handleAdd}>
-            Add to cart
+          <Button type="button" className="flex-1" disabled={!canBuy || busy} loading={pendingAction === "buy"} onClick={handleBuyNow}>
+            Buy Now
           </Button>
-          <Link href="/cart" className={cn(buttonVariants({ variant: "outline", className: "flex-1" }))}>
-            Buy now
-          </Link>
+          <Button type="button" variant="outline" className="flex-1" disabled={!canBuy || busy} loading={pendingAction === "cart"} onClick={handleAddToCart}>
+            Add to Cart
+          </Button>
         </div>
+
+        <ul className="grid gap-2 rounded-xl border border-border bg-muted p-4 text-body-sm text-foreground">
+          <li className="flex items-center gap-2.5">
+            <BanknoteIcon className="size-5 shrink-0 text-primary" strokeWidth={1.75} aria-hidden="true" />
+            Cash on Delivery. Pay when it arrives.
+          </li>
+          <li className="flex items-center gap-2.5">
+            <PhoneCallIcon className="size-5 shrink-0 text-primary" strokeWidth={1.75} aria-hidden="true" />
+            We call to confirm your order before it ships.
+          </li>
+        </ul>
       </div>
 
-      <div className="fixed inset-x-0 bottom-16 z-bar flex gap-2 border-t border-border bg-background p-3 pb-safe shadow-bar lg:hidden">
-        <Button type="button" className="flex-1" disabled={!canBuy || pending} onClick={handleAdd}>
-          Add to cart
+      <div data-buy-bar className="fixed inset-x-0 bottom-0 z-bar flex gap-2 border-t border-border bg-background p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-bar lg:hidden">
+        <Button type="button" size="lg" className="flex-1" disabled={!canBuy || busy} loading={pendingAction === "buy"} onClick={handleBuyNow}>
+          Buy Now
         </Button>
-        <Link href="/cart" className={cn(buttonVariants({ variant: "outline", className: "flex-1" }))}>
-          Buy now
-        </Link>
+        <Button type="button" size="lg" variant="outline" className="flex-1" disabled={!canBuy || busy} loading={pendingAction === "cart"} onClick={handleAddToCart}>
+          Add to Cart
+        </Button>
       </div>
     </div>
   )

@@ -1,10 +1,9 @@
 import Link from "next/link"
 import { Suspense } from "react"
 
+import { AdminProductsFilterForm } from "@/components/admin/admin-products-filter-form"
 import { AdminPageFallback } from "@/components/admin/admin-page-fallback"
 import { buttonVariants } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { formatBDT } from "@/lib/format"
 import { listAdminProducts, listBrandOptions } from "@/lib/queries/admin-catalog"
 import { cn } from "@/lib/utils"
@@ -27,49 +26,12 @@ const AdminProductsContent = async ({ searchParams }: { searchParams: Promise<Se
 
   return (
     <>
-      <form method="get" className="grid gap-3 rounded-lg border border-border bg-surface p-4 md:grid-cols-4">
-        <div className="flex flex-col gap-2 md:col-span-2">
-          <Label htmlFor="q">Search</Label>
-          <Input id="q" name="q" defaultValue={params.q ?? ""} placeholder="Name or slug" />
-        </div>
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="brandId">Brand</Label>
-          <select
-            id="brandId"
-            name="brandId"
-            defaultValue={params.brandId ?? ""}
-            className="h-12 rounded-md border border-input bg-background px-3 text-body-sm"
-          >
-            <option value="">All brands</option>
-            {brands.map((brand) => (
-              <option key={brand.id} value={brand.id}>
-                {brand.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="status">Status</Label>
-          <select
-            id="status"
-            name="status"
-            defaultValue={params.status ?? ""}
-            className="h-12 rounded-md border border-input bg-background px-3 text-body-sm"
-          >
-            <option value="">All statuses</option>
-            {STATUSES.map((entry) => (
-              <option key={entry} value={entry}>
-                {entry}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="md:col-span-4">
-          <button type="submit" className={cn(buttonVariants({ variant: "secondary", size: "sm" }), "w-fit")}>
-            Apply filters
-          </button>
-        </div>
-      </form>
+      <AdminProductsFilterForm
+        defaultQuery={params.q ?? ""}
+        defaultBrandId={params.brandId ?? ""}
+        defaultStatus={params.status ?? ""}
+        brands={brands}
+      />
 
       <p className="text-body-sm text-muted-foreground">{total} products</p>
 

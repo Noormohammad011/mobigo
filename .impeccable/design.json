@@ -1,0 +1,178 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-01T00:00:00Z",
+  "title": "Design System: MobiGo",
+  "extensions": {
+    "colorMeta": {
+      "go-indigo": { "role": "primary", "displayName": "Go Indigo", "canonical": "#5b5bf6", "tonalRamp": ["#1f1d5c", "#3b35b8", "#4a45e0", "#5b5bf6", "#7c84ff", "#aab0ff", "#dde1ff", "#eef0ff"] },
+      "go-indigo-pressed": { "role": "primary", "displayName": "Go Indigo Pressed", "canonical": "#4a45e0" },
+      "go-indigo-deep": { "role": "primary", "displayName": "Go Indigo Deep", "canonical": "#3b35b8" },
+      "go-indigo-glow": { "role": "primary", "displayName": "Go Indigo Glow", "canonical": "#7c84ff" },
+      "go-indigo-tint": { "role": "primary", "displayName": "Go Indigo Tint", "canonical": "#eef0ff" },
+      "go-indigo-wash": { "role": "primary", "displayName": "Go Indigo Wash", "canonical": "#dde1ff" },
+      "savings-green": { "role": "secondary", "displayName": "Savings Green", "canonical": "#12a150", "tonalRamp": ["#063d1e", "#0a5c2d", "#0e7f3f", "#12a150", "#3dc275", "#7fdca5", "#bff0d3", "#e8fbef"] },
+      "savings-green-deep": { "role": "secondary", "displayName": "Savings Green Deep", "canonical": "#0e7f3f" },
+      "savings-green-tint": { "role": "secondary", "displayName": "Savings Green Tint", "canonical": "#e8fbef" },
+      "hot-deal-orange": { "role": "tertiary", "displayName": "Hot Deal Orange", "canonical": "#ff7a1a", "tonalRamp": ["#5c2600", "#8f3c00", "#c45300", "#ff7a1a", "#ff9a52", "#ffbb8a", "#ffdcc2", "#fff1e6"] },
+      "counter-ink": { "role": "neutral", "displayName": "Counter Ink", "canonical": "#0b0b12", "tonalRamp": ["#0b0b12", "#16161f", "#3a3a48", "#6b6b7b", "#c9c9d3", "#e4e4ea", "#f2f2f6", "#f8f8fb"] },
+      "counter-ink-hover": { "role": "neutral", "displayName": "Counter Ink Hover", "canonical": "#16161f" },
+      "body-ink": { "role": "neutral", "displayName": "Body Ink", "canonical": "#3a3a48" },
+      "muted-ink": { "role": "neutral", "displayName": "Muted Ink", "canonical": "#6b6b7b" },
+      "border-strong": { "role": "neutral", "displayName": "Border Strong", "canonical": "#c9c9d3" },
+      "border": { "role": "neutral", "displayName": "Border", "canonical": "#e4e4ea" },
+      "skeleton-mist": { "role": "neutral", "displayName": "Skeleton Mist", "canonical": "#f2f2f6" },
+      "subtle-shelf": { "role": "neutral", "displayName": "Subtle Shelf", "canonical": "#f8f8fb" },
+      "display-white": { "role": "neutral", "displayName": "Display White", "canonical": "#ffffff" },
+      "danger": { "role": "status", "displayName": "Danger", "canonical": "#e5484d" },
+      "danger-text": { "role": "status", "displayName": "Danger Text", "canonical": "#b4232a" },
+      "warning": { "role": "status", "displayName": "Warning", "canonical": "#f5a524" },
+      "warning-text": { "role": "status", "displayName": "Warning Text", "canonical": "#8a5300" },
+      "info": { "role": "status", "displayName": "Info", "canonical": "#3e8ef7" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Hero headline only. 28px mobile, 40px at lg." },
+      "headline": { "displayName": "H1", "purpose": "Page titles and product name. 24 → 32px." },
+      "title": { "displayName": "H2", "purpose": "Section and shelf titles. 20 → 24px." },
+      "subtitle": { "displayName": "H3", "purpose": "Card-group titles, FAQ questions. 17 → 18px." },
+      "price-lg": { "displayName": "Price Large", "purpose": "Product-page price, tabular. 26 → 30px." },
+      "price": { "displayName": "Price", "purpose": "Card price, tabular. 17 → 18px." },
+      "body": { "displayName": "Body", "purpose": "Paragraphs. 15 → 16px." },
+      "body-sm": { "displayName": "Body Small", "purpose": "Card names, table cells, buttons, chips, labels." },
+      "label": { "displayName": "Caption", "purpose": "Badges, struck prices, helper text." },
+      "overline": { "displayName": "Overline", "purpose": "Uppercase spec-group labels." }
+    },
+    "shadows": [
+      { "name": "whisper", "value": "0 1px 2px rgb(11 11 18 / 0.06)", "purpose": "Cards at rest." },
+      { "name": "lift", "value": "0 6px 20px rgb(11 11 18 / 0.1)", "purpose": "Card hover (≥lg), dropdowns, search suggestions." },
+      { "name": "float", "value": "0 16px 40px rgb(11 11 18 / 0.18)", "purpose": "Drawers, sheets, modals." },
+      { "name": "bar", "value": "0 -4px 16px rgb(11 11 18 / 0.08)", "purpose": "Sticky bottom nav and buy bar." }
+    ],
+    "motion": [
+      { "name": "ease-brand", "value": "cubic-bezier(0.2, 0.8, 0.2, 1)", "purpose": "All state transitions." },
+      { "name": "duration-fast", "value": "150ms", "purpose": "Hover and press." },
+      { "name": "duration-panel", "value": "250ms", "purpose": "Drawers and accordions." },
+      { "name": "carousel-autoplay", "value": "5s", "purpose": "Hero carousel; pauses on hover/focus/touch." }
+    ],
+    "breakpoints": [
+      { "name": "base", "value": "0px" },
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Go Indigo pill for the main action: Buy Now, Place Order, Show N phones.",
+      "html": "<button class=\"ds-btn-primary\">Buy Now</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 20px; border: 1px solid transparent; border-radius: 9999px; background: #5b5bf6; color: #fff; font-family: Inter, system-ui, sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: background-color 150ms cubic-bezier(0.2,0.8,0.2,1), transform 150ms cubic-bezier(0.2,0.8,0.2,1); } .ds-btn-primary:hover { background: #4a45e0; } .ds-btn-primary:active { transform: scale(0.98); } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 2px #fff, 0 0 0 5px rgb(91 91 246 / 0.4); }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Secondary pill with a 1.5px stroke: Add to Cart, card Buy Now.",
+      "html": "<button class=\"ds-btn-outline\">Add to Cart</button>",
+      "css": ".ds-btn-outline { display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 20px; border: 1.5px solid #c9c9d3; border-radius: 9999px; background: transparent; color: #0b0b12; font-family: Inter, system-ui, sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: background-color 150ms cubic-bezier(0.2,0.8,0.2,1), transform 150ms cubic-bezier(0.2,0.8,0.2,1); } .ds-btn-outline:hover { background: #f8f8fb; } .ds-btn-outline:active { transform: scale(0.98); } .ds-btn-outline:focus-visible { outline: none; box-shadow: 0 0 0 2px #fff, 0 0 0 5px rgb(91 91 246 / 0.4); }"
+    },
+    {
+      "name": "Dark Button",
+      "kind": "button",
+      "refersTo": "button-dark",
+      "description": "Counter Ink pill for strong neutral actions.",
+      "html": "<button class=\"ds-btn-dark\">View all phones</button>",
+      "css": ".ds-btn-dark { display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 20px; border: 1px solid transparent; border-radius: 9999px; background: #0b0b12; color: #fff; font-family: Inter, system-ui, sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: background-color 150ms cubic-bezier(0.2,0.8,0.2,1), transform 150ms cubic-bezier(0.2,0.8,0.2,1); } .ds-btn-dark:hover { background: #16161f; } .ds-btn-dark:active { transform: scale(0.98); } .ds-btn-dark:focus-visible { outline: none; box-shadow: 0 0 0 2px #fff, 0 0 0 5px rgb(91 91 246 / 0.4); }"
+    },
+    {
+      "name": "Variant Chips",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "36px pills for filters and storage/color selection; selected, default and unavailable states.",
+      "html": "<div class=\"ds-chip-row\" role=\"radiogroup\" aria-label=\"Storage\"><button class=\"ds-chip ds-chip--selected\" role=\"radio\" aria-checked=\"true\">8GB / 256GB</button><button class=\"ds-chip\" role=\"radio\" aria-checked=\"false\">12GB / 512GB</button><button class=\"ds-chip ds-chip--disabled\" role=\"radio\" aria-checked=\"false\" aria-disabled=\"true\">12GB / 1TB</button></div>",
+      "css": ".ds-chip-row { display: flex; gap: 8px; flex-wrap: wrap; } .ds-chip { height: 36px; padding: 0 14px; border: 1px solid #e4e4ea; border-radius: 9999px; background: #fff; color: #0b0b12; font-family: Inter, system-ui, sans-serif; font-size: 14px; cursor: pointer; transition: border-color 150ms cubic-bezier(0.2,0.8,0.2,1), background-color 150ms cubic-bezier(0.2,0.8,0.2,1); } .ds-chip:hover { border-color: #c9c9d3; } .ds-chip:focus-visible { outline: none; box-shadow: 0 0 0 3px rgb(91 91 246 / 0.4); } .ds-chip--selected { border: 1.5px solid #5b5bf6; background: #eef0ff; color: #3b35b8; font-weight: 600; } .ds-chip--disabled { background: #f2f2f6; color: #c9c9d3; text-decoration: line-through; cursor: not-allowed; }"
+    },
+    {
+      "name": "Save Pill",
+      "kind": "custom",
+      "refersTo": "save-pill",
+      "description": "Absolute savings in honest green, beside a struck regular price.",
+      "html": "<div class=\"ds-price-row\"><span class=\"ds-price-struck\"><span class=\"ds-sr\">Regular price</span>৳117,000</span><span class=\"ds-save-pill\">৳501 OFF</span></div>",
+      "css": ".ds-price-row { display: flex; align-items: center; gap: 8px; } .ds-price-struck { color: #6b6b7b; font-family: Inter, system-ui, sans-serif; font-size: 12px; font-weight: 500; text-decoration: line-through; } .ds-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; } .ds-save-pill { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 9999px; background: #e8fbef; color: #0e7f3f; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-variant-numeric: tabular-nums; font-size: 12px; font-weight: 600; }"
+    },
+    {
+      "name": "Product Card",
+      "kind": "card",
+      "refersTo": "product-card",
+      "description": "The display-case tile: badges, square image, 2-line name, price tag, outline CTA.",
+      "html": "<article class=\"ds-card\"><div class=\"ds-card-badges\"><span class=\"ds-badge ds-badge--5g\">5G</span><span class=\"ds-badge ds-badge--new\">New</span></div><div class=\"ds-card-img\" aria-hidden=\"true\"></div><h3 class=\"ds-card-name\">Galaxy S26 Ultra 5G</h3><p class=\"ds-card-price\">৳116,499</p><div class=\"ds-card-save\"><s class=\"ds-card-struck\">৳117,000</s><span class=\"ds-card-pill\">৳501 OFF</span></div><div class=\"ds-card-actions\"><button class=\"ds-card-buy\">Buy Now</button><button class=\"ds-card-cart\" aria-label=\"Add to cart\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"8\" cy=\"21\" r=\"1\"/><circle cx=\"19\" cy=\"21\" r=\"1\"/><path d=\"M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12\"/></svg></button></div></article>",
+      "css": ".ds-card { width: 200px; padding: 12px; border: 1px solid #e4e4ea; border-radius: 16px; background: #fff; box-shadow: 0 1px 2px rgb(11 11 18 / 0.06); font-family: Inter, system-ui, sans-serif; transition: box-shadow 150ms cubic-bezier(0.2,0.8,0.2,1); } .ds-card:hover { box-shadow: 0 6px 20px rgb(11 11 18 / 0.1); } .ds-card-badges { display: flex; gap: 4px; } .ds-badge { padding: 2px 8px; border-radius: 9999px; font-size: 12px; font-weight: 600; } .ds-badge--5g { background: #0b0b12; color: #fff; } .ds-badge--new { background: #eef0ff; color: #3b35b8; } .ds-card-img { aspect-ratio: 1; margin: 8px 0; border-radius: 8px; background: #f2f2f6; } .ds-card-name { margin: 0; font-size: 14px; font-weight: 600; line-height: 1.5; color: #0b0b12; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; } .ds-card-price { margin: 4px 0 0; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-variant-numeric: tabular-nums; font-size: 17px; font-weight: 700; color: #0b0b12; } .ds-card-save { display: flex; align-items: center; gap: 6px; margin-top: 2px; } .ds-card-struck { font-size: 12px; font-weight: 500; color: #6b6b7b; } .ds-card-pill { padding: 2px 8px; border-radius: 9999px; background: #e8fbef; color: #0e7f3f; font-size: 12px; font-weight: 600; } .ds-card-actions { display: flex; gap: 8px; margin-top: 12px; } .ds-card-buy { flex: 1; height: 36px; border: 1.5px solid #c9c9d3; border-radius: 9999px; background: transparent; font-size: 14px; font-weight: 600; color: #0b0b12; cursor: pointer; } .ds-card-buy:hover { background: #f8f8fb; } .ds-card-cart { width: 36px; height: 36px; display: grid; place-items: center; border: 1.5px solid #c9c9d3; border-radius: 12px; background: transparent; color: #0b0b12; cursor: pointer; } .ds-card-buy:focus-visible, .ds-card-cart:focus-visible { outline: none; box-shadow: 0 0 0 3px rgb(91 91 246 / 0.4); }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "48px field with label above and indigo focus; phone variant shows +880 prefix.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field-label\">Phone</span><span class=\"ds-input-wrap\"><span class=\"ds-input-prefix\">+880</span><input class=\"ds-input\" inputmode=\"tel\" placeholder=\"01XXXXXXXXX\"></span></label>",
+      "css": ".ds-field { display: grid; gap: 6px; font-family: Inter, system-ui, sans-serif; max-width: 320px; } .ds-field-label { font-size: 14px; font-weight: 600; color: #0b0b12; } .ds-input-wrap { display: flex; align-items: center; height: 48px; border: 1px solid #e4e4ea; border-radius: 12px; background: #fff; transition: border-color 150ms cubic-bezier(0.2,0.8,0.2,1), box-shadow 150ms cubic-bezier(0.2,0.8,0.2,1); } .ds-input-wrap:focus-within { border-color: #5b5bf6; box-shadow: 0 0 0 3px rgb(91 91 246 / 0.4); } .ds-input-prefix { padding: 0 4px 0 14px; color: #6b6b7b; font-size: 15px; } .ds-input { flex: 1; min-width: 0; height: 100%; padding: 0 14px 0 4px; border: 0; background: transparent; font-size: 15px; color: #0b0b12; outline: none; }"
+    },
+    {
+      "name": "Header with Search",
+      "kind": "nav",
+      "refersTo": "header",
+      "description": "Counter Ink header: wordmark, cart badge, and the white pill search with indigo submit.",
+      "html": "<header class=\"ds-header\"><div class=\"ds-header-row\"><span class=\"ds-wordmark\">Mobi<span>Go</span></span><button class=\"ds-header-cart\" aria-label=\"Cart, 2 items\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"8\" cy=\"21\" r=\"1\"/><circle cx=\"19\" cy=\"21\" r=\"1\"/><path d=\"M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12\"/></svg><span class=\"ds-cart-badge\">2</span></button></div><form class=\"ds-search\" role=\"search\"><input class=\"ds-search-input\" placeholder=\"Search phones, brands…\" aria-label=\"Search\"><button class=\"ds-search-go\" aria-label=\"Search\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.3-4.3\"/></svg></button></form></header>",
+      "css": ".ds-header { background: #0b0b12; color: #fff; padding: 10px 16px 12px; font-family: Inter, system-ui, sans-serif; } .ds-header-row { display: flex; align-items: center; justify-content: space-between; height: 44px; } .ds-wordmark { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.02em; } .ds-wordmark span { color: #7c84ff; } .ds-header-cart { position: relative; width: 44px; height: 44px; display: grid; place-items: center; border: 0; border-radius: 12px; background: transparent; color: #fff; cursor: pointer; } .ds-header-cart:hover { background: #16161f; } .ds-cart-badge { position: absolute; top: 4px; right: 4px; min-width: 18px; height: 18px; display: grid; place-items: center; border-radius: 9999px; background: #5b5bf6; color: #fff; font-size: 12px; font-weight: 500; } .ds-search { display: flex; align-items: center; height: 44px; margin-top: 8px; padding: 0 4px 0 16px; border-radius: 9999px; background: #fff; } .ds-search:focus-within { box-shadow: 0 0 0 3px rgb(124 132 255 / 0.5); } .ds-search-input { flex: 1; min-width: 0; border: 0; outline: none; background: transparent; font-size: 15px; color: #0b0b12; } .ds-search-go { width: 36px; height: 36px; display: grid; place-items: center; border: 0; border-radius: 9999px; background: #5b5bf6; color: #fff; cursor: pointer; } .ds-search-go:hover { background: #4a45e0; }"
+    },
+    {
+      "name": "Sticky Buy Bar",
+      "kind": "custom",
+      "refersTo": "button-lg",
+      "description": "Thumb-zone bar on the product page (<1024px): two equal 52px buttons with the upward bar shadow.",
+      "html": "<div class=\"ds-buybar\"><button class=\"ds-buybar-buy\">Buy Now</button><button class=\"ds-buybar-cart\">Add to Cart</button></div>",
+      "css": ".ds-buybar { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px; background: #fff; box-shadow: 0 -4px 16px rgb(11 11 18 / 0.08); font-family: Inter, system-ui, sans-serif; } .ds-buybar button { height: 52px; border-radius: 9999px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background-color 150ms cubic-bezier(0.2,0.8,0.2,1), transform 150ms cubic-bezier(0.2,0.8,0.2,1); } .ds-buybar button:active { transform: scale(0.98); } .ds-buybar button:focus-visible { outline: none; box-shadow: 0 0 0 2px #fff, 0 0 0 5px rgb(91 91 246 / 0.4); } .ds-buybar-buy { border: 1px solid transparent; background: #5b5bf6; color: #fff; } .ds-buybar-buy:hover { background: #4a45e0; } .ds-buybar-cart { border: 1.5px solid #c9c9d3; background: transparent; color: #0b0b12; } .ds-buybar-cart:hover { background: #f8f8fb; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Phone Counter",
+    "overview": "MobiGo looks like a well-lit counter in a specialist phone shop. The dark Counter Ink frame (header, footer, dark buttons) is the shop itself. Inside it, the catalog is a bright white display case: every phone sits square on a clean background, with its real price tag beside it. There is one action color, Go Indigo, and it only shows where the shopper can go somewhere: buy, add, select, submit. Savings Green is kept for one job only, telling the shopper honestly how much they save.\n\nThe system is dense and practical, the way a busy counter is. It is designed first for a 360px phone held in one hand on 4G. Product grids are two columns, shelves scroll sideways with snap, filters slide up as bottom sheets, and the buy bar stays under the thumb. Components feel tactile and thumb-friendly: rounded pill buttons and chips, touch targets of at least 44px, cards that sit flat at rest and lift slightly on hover. Prices set the pace of the page. They use heavy display weights and tabular figures so a row of prices lines up like tags on a shelf.\n\nLayout follows proven Bangladeshi gadget-store patterns that shoppers already know: dark header, sticky search, shelves with filter chips, a variant-aware product page. MobiGo's own identity lives in the details: its color roles, the price typography, and its restraint.",
+    "keyCharacteristics": [
+      "A dark Counter Ink frame around a pure white catalog.",
+      "One action color (Go Indigo) and one honesty color (Savings Green).",
+      "Pill-shaped buttons and chips, touch targets of at least 44px, built for thumbs.",
+      "Prices in heavy Plus Jakarta Sans with tabular figures. Body text in Inter.",
+      "Flat at rest. Shadows mean state (hover, floating, sticky), not decoration.",
+      "Mobile-first: 360px is the design target and 320px is the test floor."
+    ],
+    "rules": [
+      { "name": "The Go Rule", "body": "Go Indigo marks only places the shopper can act or the current state. It is never used as decoration, a background wash, or a heading color. If an element can't be pressed or selected, it isn't indigo.", "section": "colors" },
+      { "name": "The Honest Green Rule", "body": "Savings Green means \"you save money\" or \"this is done or in stock\". Never use it for generic success styling or decoration, so the shopper learns to trust it.", "section": "colors" },
+      { "name": "The Semantic-Only Rule", "body": "Components read semantic tokens (bg-primary, text-muted-foreground, bg-save), never raw hex. To re-skin the store, change only the primary-* family.", "section": "colors" },
+      { "name": "The Price Tag Rule", "body": "Every price uses font-price (Jakarta with tabular figures) and goes through formatBDT(). Prices are always the heaviest text in their block. A struck regular price is always Label size in Muted Ink, with visually hidden text \"Regular price\".", "section": "typography" },
+      { "name": "The Two-Family Rule", "body": "Jakarta is for headings and numbers. Inter is for everything else. Never add a third family.", "section": "typography" },
+      { "name": "The 360 Rule", "body": "Every screen is designed at 360px first and must have no horizontal page scroll at 320px. Desktop is an expansion of the mobile layout.", "section": "layout" },
+      { "name": "The Flat-By-Default Rule", "body": "A surface gets a shadow only when it floats, sticks, or responds to a pointer. Never stack shadows or use them decoratively.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do use semantic tokens (bg-primary, text-muted-foreground, bg-save, text-danger-text) in components. Raw palette steps appear only where a badge, chip, or timeline spec names them.",
+      "Do keep every interactive target at least 44 × 44px, and design every screen at 360px first.",
+      "Do set every price in font-price through formatBDT(), and show savings as an absolute \"৳X OFF\" SavePill.",
+      "Do use Danger Text (#b4232a), not Danger, for any error text, and Counter Ink text on Hot Deal Orange.",
+      "Do give every surface a reduced-motion fallback and a skeleton with identical dimensions.",
+      "Do pair color with text for every status (savings, stock, errors). Color is never the only signal.",
+      "Do register any new custom utility in src/lib/utils.ts so cn() doesn't drop it."
+    ],
+    "donts": [
+      "Don't hard-code hex values in components. Re-skin only by changing the primary-* family.",
+      "Don't use Go Indigo for decoration, headings, or backgrounds. It marks action and the current state only.",
+      "Don't use Savings Green for anything except savings, in-stock, or completed.",
+      "Don't put white text on Hot Deal Orange (2.6:1) or Danger text on white (3.9:1).",
+      "Don't add shadows to surfaces at rest beyond the Whisper shadow, and never use pure-black shadows.",
+      "Don't add a third typeface or set prices in Inter.",
+      "Don't stack the bottom nav and the sticky buy bar.",
+      "Don't let anything cause horizontal page scroll at 320px."
+    ]
+  }
+}

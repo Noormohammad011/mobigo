@@ -31,12 +31,12 @@ export const PhoneListingFallback = ({
       <div className={cn(pulse, "h-4 w-28")} />
     </header>
     <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-      <div className={cn("flex flex-col gap-3 rounded-lg border border-border bg-card p-4 lg:w-64 lg:shrink-0")}>
+      <div className={cn("flex flex-col gap-3 rounded-xl border border-border bg-muted/30 p-4 sm:p-5 lg:w-72 lg:shrink-0")}>
         {Array.from({ length: 6 }, (_, index) => (
           <div key={index} className={cn(pulse, "h-11 w-full")} />
         ))}
       </div>
-      <div className="grid min-w-0 flex-1 grid-cols-2 gap-3 md:grid-cols-3">
+      <div className="grid min-w-0 flex-1 grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-5">
         {Array.from({ length: 8 }, (_, index) => (
           <div key={index} className={cn(pulse, "aspect-[3/4] w-full rounded-lg")} />
         ))}

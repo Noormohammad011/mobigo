@@ -5,6 +5,7 @@ import Link from "next/link"
 import { useState } from "react"
 
 import { Wordmark } from "@/components/brand/wordmark"
+import { ThemeSwitcher } from "@/components/theme/theme-switcher"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 
 import { headerIconClass } from "./header-icon-link"
@@ -128,6 +129,13 @@ export function MobileMenu({
                 </li>
               ))}
             </ul>
+          </section>
+
+          <section aria-labelledby="menu-theme" className="border-t border-border pt-4">
+            <h2 id="menu-theme" className="mb-2 px-3 text-overline text-muted-foreground uppercase">
+              Theme
+            </h2>
+            <ThemeSwitcher showLabels className="mx-3" />
           </section>
         </nav>
       </SheetContent>

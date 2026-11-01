@@ -14,7 +14,7 @@ const ALL = "__all"
 
 /**
  * Shelf — DESIGN_SYSTEM §7.13, PRD H-4. Brand chips filter on the client; the track uses
- * scroll-snap with 2.2 / 3.2 / 5 cards visible, and prev/next buttons at ≥lg.
+ * scroll-snap with ~2.2 / ~3.2 / 3 cards visible, and prev/next buttons at ≥lg.
  */
 export function Shelf({ shelf, compareEnabled = false }: { shelf: HomeShelf; compareEnabled?: boolean }) {
   const headingId = `shelf-${shelf.slug}`
@@ -96,14 +96,14 @@ export function Shelf({ shelf, compareEnabled = false }: { shelf: HomeShelf; com
         ref={track}
         onScroll={updateEdges}
         aria-label={brand === ALL ? shelf.title : `${shelf.title}: ${brand}`}
-        className="scrollbar-none -mx-4 flex snap-x snap-mandatory scroll-px-4 gap-3 overflow-x-auto px-4 pt-1 pb-2 md:-mx-6 md:scroll-px-6 md:px-6 lg:mx-0 lg:scroll-px-0 lg:gap-5 lg:px-0"
+        className="scrollbar-none -mx-4 flex snap-x snap-mandatory scroll-px-4 gap-3 overflow-x-auto px-4 pb-1 md:-mx-6 md:scroll-px-6 md:px-6 lg:mx-0 lg:scroll-px-0 lg:gap-5 lg:px-0"
       >
         {products.map((p) => (
           <li
             key={p.id}
-            className="shrink-0 basis-[calc((100%-1.5rem)/2.2)] snap-start md:basis-[calc((100%-2.25rem)/3.2)] lg:basis-[calc((100%-5rem)/5)]"
+            className="shrink-0 basis-[calc((100%-0.75rem)/2.2)] snap-start md:basis-[calc((100%-2.25rem)/3.2)] lg:basis-[calc((100%-2.5rem)/3)]"
           >
-            <ProductCard product={p} compareEnabled={compareEnabled} />
+            <ProductCard product={p} layout="shelf" compareEnabled={compareEnabled} />
           </li>
         ))}
       </ul>

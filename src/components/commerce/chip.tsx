@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils"
 
 /** Chip (DESIGN_SYSTEM §7.6): 36px pill, 1px border, body-sm. 44px hit area via ::after. */
 const chipBase = cva(
-  "relative inline-flex h-9 shrink-0 cursor-pointer snap-start items-center gap-2 rounded-full border border-border bg-background px-3.5 text-body-sm font-medium whitespace-nowrap text-foreground transition-colors duration-150 ease-brand outline-none select-none after:absolute after:-inset-y-1 after:inset-x-0 hover:border-border-strong focus-visible:ring-3 focus-visible:ring-ring/40 focus-visible:ring-offset-1 data-checked:border-[1.5px] data-checked:border-primary data-checked:bg-primary-50 data-checked:text-primary-700 data-pressed:border-[1.5px] data-pressed:border-primary data-pressed:bg-primary-50 data-pressed:text-primary-700 data-disabled:cursor-not-allowed data-disabled:opacity-40"
+  "relative inline-flex h-9 shrink-0 cursor-pointer snap-start items-center gap-2 rounded-full border border-border bg-background px-3.5 text-body-sm font-medium whitespace-nowrap text-foreground transition-colors duration-150 ease-brand outline-none select-none after:absolute after:-inset-y-1 after:inset-x-0 hover:border-border-strong focus-visible:ring-3 focus-visible:ring-ring/40 focus-visible:ring-offset-1 data-checked:border-[1.5px] data-checked:border-primary data-checked:bg-accent data-checked:text-accent-foreground data-pressed:border-[1.5px] data-pressed:border-primary data-pressed:bg-accent data-pressed:text-accent-foreground data-disabled:cursor-not-allowed data-disabled:opacity-40"
 )
 
 /** Horizontal chip row: scroll-snap, edge fade, no scrollbar (§7.6). */
@@ -68,7 +68,7 @@ export function ChoiceChip({
       className={cn(
         chipBase(),
         unavailable &&
-          "border-dashed bg-ink-100 text-ink-500 bg-[linear-gradient(to_top_right,transparent_calc(50%-0.75px),var(--color-ink-300)_50%,transparent_calc(50%+0.75px))] data-checked:bg-ink-100",
+          "border-dashed bg-muted text-muted-foreground bg-[linear-gradient(to_top_right,transparent_calc(50%-0.75px),var(--border-strong)_50%,transparent_calc(50%+0.75px))] data-checked:bg-muted",
         className
       )}
       title={unavailable ? unavailableLabel : undefined}

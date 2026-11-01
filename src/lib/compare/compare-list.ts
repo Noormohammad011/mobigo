@@ -9,6 +9,12 @@ export const COMPARE_SERVER_SNAPSHOT = EMPTY
 let snapshot: string[] = EMPTY
 let snapshotKey = ""
 
+/** True after the compare list has been written at least once (including an empty list). */
+export const isCompareListInitialized = (): boolean => {
+  if (typeof window === "undefined") return false
+  return localStorage.getItem(KEY) !== null
+}
+
 export const readCompareSlugs = (): string[] => {
   if (typeof window === "undefined") return EMPTY
   try {

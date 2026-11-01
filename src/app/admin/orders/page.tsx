@@ -1,9 +1,9 @@
 import Link from "next/link"
 import { Suspense } from "react"
 
+import { AdminOrdersFilterForm } from "@/components/admin/admin-orders-filter-form"
 import { AdminPageFallback } from "@/components/admin/admin-page-fallback"
 import {
-  ADMIN_ORDER_STATUSES,
   listAdminOrders,
   parseAdminOrderListFilters,
 } from "@/lib/queries/admin-orders"
@@ -115,68 +115,12 @@ export default async function AdminOrdersPage({
     <div className="flex flex-col gap-6">
       <h1 className="font-display text-h1 text-foreground">Orders</h1>
 
-      <form method="get" className="flex flex-col gap-4 rounded-lg border border-border bg-surface p-4">
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <label className="flex flex-col gap-1 text-body-sm">
-            <span className="font-semibold text-foreground">Search</span>
-            <input
-              type="search"
-              name="q"
-              defaultValue={typeof params.q === "string" ? params.q : ""}
-              placeholder="Order number or phone"
-              className="h-10 rounded-md border border-border bg-background px-3"
-            />
-          </label>
-          <label className="flex flex-col gap-1 text-body-sm">
-            <span className="font-semibold text-foreground">From date</span>
-            <input
-              type="date"
-              name="from"
-              defaultValue={typeof params.from === "string" ? params.from : ""}
-              className="h-10 rounded-md border border-border bg-background px-3"
-            />
-          </label>
-          <label className="flex flex-col gap-1 text-body-sm">
-            <span className="font-semibold text-foreground">To date</span>
-            <input
-              type="date"
-              name="to"
-              defaultValue={typeof params.to === "string" ? params.to : ""}
-              className="h-10 rounded-md border border-border bg-background px-3"
-            />
-          </label>
-        </div>
-        <fieldset>
-          <legend className="text-body-sm font-semibold text-foreground">Status</legend>
-          <div className="mt-2 flex flex-wrap gap-3">
-            {ADMIN_ORDER_STATUSES.map((status) => (
-              <label key={status} className="flex items-center gap-2 text-body-sm">
-                <input
-                  type="checkbox"
-                  name="status"
-                  value={status}
-                  defaultChecked={selectedStatus.includes(status)}
-                  className="size-4"
-                />
-                {orderStatusLabel(status)}
-              </label>
-            ))}
-          </div>
-        </fieldset>
-        <div className="flex gap-2">
-          <button
-            type="submit"
-            className={cn(
-              "inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 text-body-sm font-semibold text-primary-foreground"
-            )}
-          >
-            Apply filters
-          </button>
-          <Link href="/admin/orders" className="inline-flex h-10 items-center px-3 text-body-sm text-link hover:underline">
-            Clear
-          </Link>
-        </div>
-      </form>
+      <AdminOrdersFilterForm
+        defaultQuery={typeof params.q === "string" ? params.q : ""}
+        defaultFrom={typeof params.from === "string" ? params.from : ""}
+        defaultTo={typeof params.to === "string" ? params.to : ""}
+        selectedStatus={selectedStatus}
+      />
 
       <Suspense fallback={<AdminPageFallback title="Orders" />}>
         <OrdersTable searchParams={params} />

@@ -20,8 +20,8 @@ export function SectionHeader({
   className?: string
 }) {
   return (
-    <div className={cn("flex items-center justify-between gap-3", className)}>
-      <h2 id={id} className="text-h2">
+    <div className={cn("flex items-end justify-between gap-3", className)}>
+      <h2 id={id} className="text-h2 tracking-[-0.02em] lg:text-h1">
         {title}
       </h2>
       <div className="flex items-center gap-2">

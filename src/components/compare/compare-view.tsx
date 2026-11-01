@@ -15,6 +15,7 @@ import {
   compareSlugsToSearch,
   COMPARE_SERVER_SNAPSHOT,
   getCompareSnapshot,
+  isCompareListInitialized,
   readCompareSlugs,
   removeCompareSlug,
   subscribeCompare,
@@ -36,19 +37,27 @@ export const CompareView = ({
 }) => {
   const router = useRouter()
   const storedSlugs = useSyncExternalStore(subscribeCompare, getCompareSnapshot, () => COMPARE_SERVER_SNAPSHOT)
+  const isClient = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  )
   const [highlight, setHighlight] = useState(false)
   const [payload, setPayload] = useState(initial)
   const [loading, setLoading] = useState(false)
 
-  const slugs = storedSlugs.length > 0 ? storedSlugs : initialSlugs
+  const slugs =
+    !isClient || !isCompareListInitialized() ? initialSlugs : storedSlugs
 
   useEffect(() => {
+    if (!isClient) return
     const local = readCompareSlugs()
     const query = compareSlugsToSearch(local)
-    if (query && typeof window !== "undefined" && window.location.search !== query) {
-      router.replace(`/compare${query}`)
+    const target = query ? `/compare${query}` : "/compare"
+    if (typeof window !== "undefined" && `${window.location.pathname}${window.location.search}` !== target) {
+      router.replace(target)
     }
-  }, [router, storedSlugs])
+  }, [router, storedSlugs, isClient])
 
   useEffect(() => {
     if (slugs.length === 0) {

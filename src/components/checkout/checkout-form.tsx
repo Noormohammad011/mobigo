@@ -5,6 +5,7 @@ import { useActionState, useMemo, useState } from "react"
 
 import { placeOrderAction, type PlaceOrderState } from "@/app/checkout/actions"
 import { Button } from "@/components/ui/button"
+import { FormSelect } from "@/components/ui/form-select"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
@@ -57,20 +58,16 @@ export const CheckoutForm = ({
         </div>
         <div className="grid gap-2">
           <Label htmlFor="district">District</Label>
-          <select
-            id="district"
+          <FormSelect
             name="district"
-            required
             value={district}
-            onChange={(e) => setDistrict(e.target.value)}
-            className={cn("h-11 w-full rounded-md border border-input bg-background px-3 text-body text-foreground")}
-          >
-            {zones.map((z) => (
-              <option key={z.district} value={z.district}>
-                {z.district} ({formatBDT(z.fee)} delivery)
-              </option>
-            ))}
-          </select>
+            onValueChange={setDistrict}
+            required
+            options={zones.map((z) => ({
+              value: z.district,
+              label: `${z.district} (${formatBDT(z.fee)} delivery)`,
+            }))}
+          />
         </div>
         <div className="grid gap-2">
           <Label htmlFor="area">Area</Label>

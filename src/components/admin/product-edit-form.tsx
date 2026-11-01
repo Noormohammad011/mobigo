@@ -7,6 +7,8 @@ import { useActionState, useMemo, useState, useTransition } from "react"
 import { deleteProductImageAction, saveProductAction, uploadProductImageAction } from "@/app/admin/catalog/actions"
 import type { ProductEditClientPayload } from "@/lib/admin/serialize-product-edit"
 import { Button } from "@/components/ui/button"
+import { DateInput } from "@/components/ui/date-input"
+import { FormSelect, SelectField } from "@/components/ui/form-select"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
@@ -123,33 +125,22 @@ export const ProductEditForm = ({
         <div className="grid gap-4 md:grid-cols-2">
           <div className="flex flex-col gap-2">
             <Label htmlFor="brandId">Brand</Label>
-            <select
-              id="brandId"
+            <FormSelect
               name="brandId"
               defaultValue={product.brandId}
-              className="h-12 rounded-md border border-input bg-background px-3 text-body-sm"
-            >
-              {brands.map((brand) => (
-                <option key={brand.id} value={brand.id}>
-                  {brand.name}
-                </option>
-              ))}
-            </select>
+              options={brands.map((brand) => ({ value: brand.id, label: brand.name }))}
+            />
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="status">Status</Label>
-            <select
-              id="status"
+            <FormSelect
               name="status"
               defaultValue={product.status}
-              className="h-12 rounded-md border border-input bg-background px-3 text-body-sm"
-            >
-              {(["DRAFT", "ACTIVE", "PREORDER", "DISCONTINUED"] as const).map((entry) => (
-                <option key={entry} value={entry}>
-                  {entry}
-                </option>
-              ))}
-            </select>
+              options={(["DRAFT", "ACTIVE", "PREORDER", "DISCONTINUED"] as const).map((entry) => ({
+                value: entry,
+                label: entry,
+              }))}
+            />
           </div>
           <div className="flex flex-col gap-2 md:col-span-2">
             <Label htmlFor="name">Name</Label>
@@ -164,12 +155,7 @@ export const ProductEditForm = ({
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="releaseDate">Release date</Label>
-            <Input
-              id="releaseDate"
-              name="releaseDate"
-              type="date"
-              defaultValue={product.releaseDate ?? ""}
-            />
+            <DateInput id="releaseDate" name="releaseDate" type="date" defaultValue={product.releaseDate ?? ""} />
           </div>
           <div className="flex flex-col gap-2 md:col-span-2">
             <Label htmlFor="shortDescription">Short description</Label>
@@ -195,16 +181,16 @@ export const ProductEditForm = ({
         <div className="grid gap-4 md:grid-cols-2">
           <div className="flex flex-col gap-2">
             <Label htmlFor="network">Network</Label>
-            <select
-              id="network"
+            <FormSelect
               name="network"
               defaultValue={product.network ?? ""}
-              className="h-12 rounded-md border border-input bg-background px-3 text-body-sm"
-            >
-              <option value="">Not set</option>
-              <option value="G4">4G</option>
-              <option value="G5">5G</option>
-            </select>
+              placeholder="Not set"
+              options={[
+                { value: "", label: "Not set" },
+                { value: "G4", label: "4G" },
+                { value: "G5", label: "5G" },
+              ]}
+            />
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="displaySizeIn">Display size (inch)</Label>
@@ -298,21 +284,16 @@ export const ProductEditForm = ({
               {variants.map((variant, index) => (
                 <tr key={variant.id ?? `v-${index}`} className="border-b border-border">
                   <td className="p-2">
-                    <select
+                    <SelectField
                       value={variant.colorId}
-                      onChange={(event) =>
+                      onValueChange={(colorId) =>
                         setVariants((prev) =>
-                          prev.map((row, rowIndex) => (rowIndex === index ? { ...row, colorId: event.target.value } : row))
+                          prev.map((row, rowIndex) => (rowIndex === index ? { ...row, colorId } : row))
                         )
                       }
-                      className="h-10 w-full min-w-[120px] rounded-md border border-input bg-background px-2"
-                    >
-                      {colorOptions.map((option) => (
-                        <option key={option.key} value={option.key}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
+                      options={colorOptions.map((option) => ({ value: option.key, label: option.label }))}
+                      triggerClassName="min-w-[120px]"
+                    />
                   </td>
                   <td className="p-2">
                     <Input
@@ -396,22 +377,22 @@ export const ProductEditForm = ({
                   </td>
                   <td className="p-2 text-muted-foreground">{variant.reservedStock}</td>
                   <td className="p-2">
-                    <select
+                    <SelectField
                       value={variant.warrantyType}
-                      onChange={(event) =>
+                      onValueChange={(warrantyType) =>
                         setVariants((prev) =>
                           prev.map((row, rowIndex) =>
                             rowIndex === index
-                              ? { ...row, warrantyType: event.target.value as "OFFICIAL" | "UNOFFICIAL" }
+                              ? { ...row, warrantyType: warrantyType as "OFFICIAL" | "UNOFFICIAL" }
                               : row
                           )
                         )
                       }
-                      className="h-10 rounded-md border border-input bg-background px-2"
-                    >
-                      <option value="OFFICIAL">Official</option>
-                      <option value="UNOFFICIAL">Unofficial</option>
-                    </select>
+                      options={[
+                        { value: "OFFICIAL", label: "Official" },
+                        { value: "UNOFFICIAL", label: "Unofficial" },
+                      ]}
+                    />
                   </td>
                   <td className="p-2">
                     <input

@@ -19,7 +19,7 @@ const badgeVariants = cva(
           "hover:bg-muted hover:text-muted-foreground dark:hover:bg-muted/50",
         link: "text-link underline-offset-4 hover:underline",
         // MobiGo product badges (DESIGN_SYSTEM §7.5)
-        new: "bg-primary-50 text-primary-700",
+        new: "bg-accent text-accent-foreground",
         "5g": "bg-ink-950 text-white",
         preorder: "bg-warning-500/15 text-warning-700",
         out: "bg-danger-500/12 text-danger-700",

@@ -1,7 +1,7 @@
 import "server-only"
 
 import { db } from "@/lib/db"
-import { LISTING_PAGE_SIZE, type ListingQuery } from "@/lib/listing-params"
+import { LISTING_PAGE_SIZE, type BatteryBand, type DisplayBand, type ListingQuery } from "@/lib/listing-params"
 import { productCardSelect, toProductCard, type ProductCardData } from "@/lib/queries/home"
 import { searchProductIds } from "@/lib/queries/search"
 import type { Prisma } from "@/generated/prisma/client"
@@ -13,18 +13,16 @@ export type ListingResult = {
   chipsets: string[]
 }
 
-const displayWhere = (band: ListingQuery["display"]): Prisma.DecimalFilter | undefined => {
-  if (band === "under6") return { lt: 6 }
-  if (band === "6to65") return { gte: 6, lte: 6.5 }
-  if (band === "over65") return { gt: 6.5 }
-  return undefined
+const DISPLAY_RANGES: Record<DisplayBand, Prisma.DecimalFilter> = {
+  under6: { lt: 6 },
+  "6to65": { gte: 6, lte: 6.5 },
+  over65: { gt: 6.5 },
 }
 
-const batteryWhere = (band: ListingQuery["battery"]): Prisma.IntFilter | undefined => {
-  if (band === "under4000") return { lt: 4000 }
-  if (band === "4000to5000") return { gte: 4000, lte: 5000 }
-  if (band === "over5000") return { gt: 5000 }
-  return undefined
+const BATTERY_RANGES: Record<BatteryBand, Prisma.IntFilter> = {
+  under4000: { lt: 4000 },
+  "4000to5000": { gte: 4000, lte: 5000 },
+  over5000: { gt: 5000 },
 }
 
 const orderBy = (sort: ListingQuery["sort"]): Prisma.ProductOrderByWithRelationInput => {
@@ -36,28 +34,32 @@ const orderBy = (sort: ListingQuery["sort"]): Prisma.ProductOrderByWithRelationI
 }
 
 const whereFor = (query: ListingQuery, collectionSlug?: string): Prisma.ProductWhereInput => {
-  const where: Prisma.ProductWhereInput = {
-    status: query.availability === "preorder" ? "PREORDER" : query.availability === "in_stock" ? "ACTIVE" : { in: ["ACTIVE", "PREORDER"] },
-  }
-  if (query.availability === "in_stock") where.inStock = true
-  if (query.brandSlug) where.brand = { slug: query.brandSlug }
+  const and: Prisma.ProductWhereInput[] = []
+  const wantsStock = query.availabilities.includes("in_stock")
+  const wantsPreorder = query.availabilities.includes("preorder")
+  if (wantsStock && !wantsPreorder) and.push({ status: "ACTIVE", inStock: true })
+  else if (wantsPreorder && !wantsStock) and.push({ status: "PREORDER" })
+  else if (wantsStock && wantsPreorder) and.push({ OR: [{ status: "ACTIVE", inStock: true }, { status: "PREORDER" }] })
+  else and.push({ status: { in: ["ACTIVE", "PREORDER"] } })
+
+  if (query.brandSlugs.length) and.push({ brand: { slug: { in: query.brandSlugs } } })
   if (query.minPrice != null || query.maxPrice != null) {
-    where.minPrice = {
-      ...(query.minPrice != null ? { gte: query.minPrice } : {}),
-      ...(query.maxPrice != null ? { lte: query.maxPrice } : {}),
-    }
+    and.push({
+      minPrice: {
+        ...(query.minPrice != null ? { gte: query.minPrice } : {}),
+        ...(query.maxPrice != null ? { lte: query.maxPrice } : {}),
+      },
+    })
   }
-  if (query.ram != null) where.ramOptionsGb = { has: query.ram }
-  if (query.storage != null) where.storageOptionsGb = { has: query.storage }
-  if (query.network) where.network = query.network
-  if (query.chipset) where.chipsetBrand = query.chipset
-  const display = displayWhere(query.display)
-  if (display) where.displaySizeIn = display
-  const battery = batteryWhere(query.battery)
-  if (battery) where.batteryMah = battery
-  if (collectionSlug) where.collections = { some: { collection: { slug: collectionSlug } } }
-  if (query.productIds?.length) where.id = { in: query.productIds }
-  return where
+  if (query.rams.length) and.push({ ramOptionsGb: { hasSome: query.rams } })
+  if (query.storages.length) and.push({ storageOptionsGb: { hasSome: query.storages } })
+  if (query.networks.length) and.push({ network: { in: query.networks } })
+  if (query.chipsets.length) and.push({ chipsetBrand: { in: query.chipsets } })
+  if (query.displays.length) and.push({ OR: query.displays.map((band) => ({ displaySizeIn: DISPLAY_RANGES[band] })) })
+  if (query.batteries.length) and.push({ OR: query.batteries.map((band) => ({ batteryMah: BATTERY_RANGES[band] })) })
+  if (collectionSlug) and.push({ collections: { some: { collection: { slug: collectionSlug } } } })
+  if (query.productIds?.length) and.push({ id: { in: query.productIds } })
+  return { AND: and }
 }
 
 /** Search results: restrict listing to ranked product ids. Empty q means no id filter. */

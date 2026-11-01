@@ -13,6 +13,8 @@ import { HeaderIconLink } from "./header-icon-link"
 import { MobileMenu } from "./mobile-menu"
 import { MobileMenuStaffSlot } from "./mobile-menu-staff-slot"
 import { BUDGET_BANDS, NAV_BRAND_LIMIT } from "./nav"
+import { ThemeSwitcher } from "@/components/theme/theme-switcher"
+
 import { SearchBarWithSuggestions } from "./search-bar-with-suggestions"
 
 const DESKTOP_LINKS = [
@@ -33,7 +35,7 @@ export async function Header() {
 
   return (
     <>
-      <header className="bg-header text-header-foreground lg:sticky lg:top-0 lg:z-header">
+      <header className="border-b border-ink-900 bg-header text-header-foreground lg:sticky lg:top-0 lg:z-header">
         <div className="page-container flex h-14 items-center gap-1 md:h-16 md:gap-4">
           <Suspense
             fallback={<MobileMenu brands={navBrands} showCompare={showCompare} showAdmin={false} />}
@@ -70,6 +72,7 @@ export async function Header() {
             <Suspense fallback={null}>
               <HeaderAdminSlot />
             </Suspense>
+            <ThemeSwitcher tone="inverse" className="mx-1 hidden lg:inline-flex" />
             <HeaderIconLink href="/account" aria-label="My account" className="hidden lg:inline-flex">
               <UserIcon strokeWidth={1.75} aria-hidden="true" />
             </HeaderIconLink>
@@ -104,4 +107,4 @@ export async function Header() {
 }
 
 const brandNavLink =
-  "inline-flex h-9 shrink-0 items-center rounded-full px-3 text-body-sm font-medium whitespace-nowrap text-ink-700 transition-colors duration-150 ease-brand outline-none hover:bg-accent hover:text-accent-foreground focus-visible:ring-3 focus-visible:ring-ring/40"
+  "inline-flex h-9 shrink-0 items-center rounded-full px-3 text-body-sm font-medium whitespace-nowrap text-foreground/80 transition-colors duration-150 ease-brand outline-none hover:bg-accent hover:text-accent-foreground focus-visible:ring-3 focus-visible:ring-ring/40"

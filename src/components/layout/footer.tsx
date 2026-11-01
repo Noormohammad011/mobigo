@@ -37,7 +37,7 @@ export async function Footer() {
   ].filter((s): s is LinkItem => Boolean(s.href))
 
   return (
-    <footer className="bg-header text-header-foreground">
+    <footer className="surface-counter mt-8 border-t border-primary-700/40 text-header-foreground lg:mt-14">
       <div className="page-container grid gap-10 py-10 lg:grid-cols-[1.2fr_2fr] lg:gap-16 lg:py-14">
         <section aria-label="About MobiGo" className="grid content-start gap-5">
           <Link href="/" aria-label="MobiGo home" className="w-fit rounded-sm outline-none focus-visible:ring-3 focus-visible:ring-primary-400">
@@ -99,7 +99,7 @@ export async function Footer() {
         {/* pr-20 keeps this row clear of the floating WhatsApp button. */}
         <div className="page-container flex flex-col gap-3 py-5 pr-20 text-caption text-ink-300 sm:flex-row sm:items-center sm:justify-between lg:pr-24">
           <p>© {year} MobiGo. All rights reserved.</p>
-          <p className="inline-flex items-center gap-2">
+          <p className="inline-flex items-center gap-2 sm:ml-auto">
             <BanknoteIcon className="size-4 text-save-600" strokeWidth={1.75} aria-hidden="true" />
             Cash on Delivery across Bangladesh
           </p>

@@ -37,7 +37,7 @@ export async function brandListingMetadataForRoute(
   const brand = await db.brand.findUnique({ where: { slug }, select: { name: true } })
   if (!brand) return { title: "Brand" }
   const query = parseListingQuery(await searchParams, { brandSlug: slug })
-  const search = toListingSearch({ ...query, brandSlug: undefined })
+  const search = toListingSearch({ ...query, brandSlugs: [] })
   return {
     title: `${brand.name} phones in Bangladesh`,
     description: `Shop ${brand.name} phones at MobiGo. Cash on delivery across Bangladesh.`,

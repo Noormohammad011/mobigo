@@ -92,7 +92,7 @@ export function HeroCarousel({ slides, side }: { slides: HomeBanner[]; side: Hom
       <section
         aria-roledescription="carousel"
         aria-label="Featured offers"
-        className="relative overflow-hidden rounded-xl bg-ink-950 lg:col-span-2"
+        className="relative overflow-hidden rounded-xl bg-ink-950 shadow-lg ring-1 ring-ink-950/10 lg:col-span-2"
         onMouseEnter={() => setInteracting(true)}
         onMouseLeave={() => setInteracting(false)}
         onFocus={() => setInteracting(true)}
@@ -137,7 +137,7 @@ export function HeroCarousel({ slides, side }: { slides: HomeBanner[]; side: Hom
                 onClick={() => goTo(i)}
                 aria-label={`Show slide ${i + 1}`}
                 aria-current={i === index ? "true" : undefined}
-                className="group/dot grid h-6 place-items-center px-1 outline-none"
+                className="group/dot grid h-6 min-w-6 place-items-center px-1 outline-none"
               >
                 <span
                   className={cn(
@@ -155,7 +155,7 @@ export function HeroCarousel({ slides, side }: { slides: HomeBanner[]; side: Hom
         <div className="hidden lg:grid lg:h-full lg:grid-rows-2 lg:gap-5">
           {side.map((b) => (
             // Absolutely positioned, so the tiles take their height from the carousel's row.
-            <div key={b.id} className="relative min-h-0 overflow-hidden rounded-xl bg-ink-950">
+            <div key={b.id} className="lift relative min-h-0 overflow-hidden rounded-xl bg-ink-950 ring-1 ring-ink-950/10">
               <div className="absolute inset-0">
                 <Slide banner={b} priority={false} />
               </div>

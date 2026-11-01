@@ -20,7 +20,7 @@ export function Price({ price, compareAtPrice, from, className }: PriceProps) {
         {formatBDT(price)}
       </p>
       {saving > 0 && (
-        <p className="flex flex-wrap items-center gap-1.5">
+        <p className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
           <s className="font-price text-caption text-muted-foreground">
             <span className="sr-only">Regular price </span>
             {formatBDT(compareAtPrice!)}

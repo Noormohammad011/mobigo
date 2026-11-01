@@ -5,6 +5,8 @@ import { useActionState } from "react"
 import { deleteBannerAction, saveBannerAction } from "@/app/admin/merchandising/actions"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { FormSelect } from "@/components/ui/form-select"
+import { DateInput } from "@/components/ui/date-input"
 import { Label } from "@/components/ui/label"
 import { toDateTimeLocalValue } from "@/lib/admin/merchandising-schemas"
 import type { Banner } from "@/generated/prisma/client"
@@ -35,18 +37,14 @@ export const BannerForm = ({ banner }: { banner?: Banner }) => {
         </div>
         <div className="flex flex-col gap-2">
           <Label htmlFor="placement">Placement</Label>
-          <select
-            id="placement"
+          <FormSelect
             name="placement"
             defaultValue={banner?.placement ?? "HERO"}
-            className="h-10 rounded-md border border-border bg-background px-3 text-body-sm"
-          >
-            {(Object.keys(placementLabels) as Banner["placement"][]).map((key) => (
-              <option key={key} value={key}>
-                {placementLabels[key]}
-              </option>
-            ))}
-          </select>
+            options={(Object.keys(placementLabels) as Banner["placement"][]).map((key) => ({
+              value: key,
+              label: placementLabels[key],
+            }))}
+          />
         </div>
         <div className="flex flex-col gap-2">
           <Label htmlFor="imageMobileUrl">Mobile image URL</Label>
@@ -81,7 +79,7 @@ export const BannerForm = ({ banner }: { banner?: Banner }) => {
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="flex flex-col gap-2">
             <Label htmlFor="startsAt">Starts at (optional)</Label>
-            <Input
+            <DateInput
               id="startsAt"
               name="startsAt"
               type="datetime-local"
@@ -90,7 +88,7 @@ export const BannerForm = ({ banner }: { banner?: Banner }) => {
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="endsAt">Ends at (optional)</Label>
-            <Input id="endsAt" name="endsAt" type="datetime-local" defaultValue={toDateTimeLocalValue(banner?.endsAt)} />
+            <DateInput id="endsAt" name="endsAt" type="datetime-local" defaultValue={toDateTimeLocalValue(banner?.endsAt)} />
           </div>
         </div>
         <Button type="submit" disabled={pending}>

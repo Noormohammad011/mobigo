@@ -16,14 +16,14 @@ export function BrandGrid({ brands }: { brands: BrandTile[] }) {
           <li key={b.slug}>
             <Link
               href={`/brands/${b.slug}`}
-              className="flex aspect-[4/3] flex-col items-center justify-center gap-1 rounded-lg bg-ink-100 p-3 text-center outline-none transition-colors duration-150 ease-brand hover:bg-ink-200 focus-visible:ring-3 focus-visible:ring-ring/40"
+              className="surface-counter lift group/brand flex aspect-[4/3] flex-col items-center justify-center gap-1 rounded-xl border border-ink-700 p-3 text-center outline-none hover:border-primary-600 focus-visible:ring-3 focus-visible:ring-ring/40"
             >
               {b.logoUrl ? (
-                <Image src={b.logoUrl} alt="" width={96} height={32} className="h-8 w-auto grayscale" />
+                <Image src={b.logoUrl} alt="" width={96} height={32} className="h-8 w-auto brightness-0 invert" />
               ) : (
-                <span className="font-display text-h3 font-extrabold tracking-[-0.02em] text-ink-950">{b.name}</span>
+                <span className="font-display text-h3 font-extrabold tracking-[-0.02em] text-white">{b.name}</span>
               )}
-              <span className="text-caption text-muted-foreground">
+              <span className="text-caption text-primary-100/70 transition-colors duration-150 group-hover/brand:text-primary-100">
                 {b.logoUrl && <span className="sr-only">{b.name}, </span>}
                 {b.phoneCount} {b.phoneCount === 1 ? "phone" : "phones"}
               </span>

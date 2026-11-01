@@ -4,6 +4,7 @@ import { useActionState } from "react"
 
 import { createDraftProductAction } from "@/app/admin/catalog/actions"
 import { Button } from "@/components/ui/button"
+import { FormSelect } from "@/components/ui/form-select"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
@@ -23,22 +24,12 @@ export const NewProductForm = ({
       ) : null}
       <div className="flex flex-col gap-2">
         <Label htmlFor="brandId">Brand</Label>
-        <select
-          id="brandId"
+        <FormSelect
           name="brandId"
           required
-          className="h-12 rounded-md border border-input bg-background px-3 text-body-sm"
-          defaultValue=""
-        >
-          <option value="" disabled>
-            Select brand
-          </option>
-          {brands.map((brand) => (
-            <option key={brand.id} value={brand.id}>
-              {brand.name}
-            </option>
-          ))}
-        </select>
+          placeholder="Select brand"
+          options={brands.map((brand) => ({ value: brand.id, label: brand.name }))}
+        />
       </div>
       <div className="flex flex-col gap-2">
         <Label htmlFor="name">Product name</Label>

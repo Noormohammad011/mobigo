@@ -3,6 +3,7 @@
 import { useActionState } from "react"
 
 import { transitionOrderAction } from "@/app/admin/orders/actions"
+import { FormSelect } from "@/components/ui/form-select"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
@@ -35,19 +36,12 @@ export const AdminOrderTransitionForm = ({
       {state?.ok ? <p className="text-body-sm text-success-text">Status updated.</p> : null}
       <div className="flex flex-col gap-2">
         <Label htmlFor="toStatus">New status</Label>
-        <select
-          id="toStatus"
+        <FormSelect
           name="toStatus"
           required
           defaultValue={next[0]}
-          className="h-10 rounded-md border border-border bg-background px-3 text-body-sm"
-        >
-          {next.map((status) => (
-            <option key={status} value={status}>
-              {orderStatusLabel(status)}
-            </option>
-          ))}
-        </select>
+          options={next.map((status) => ({ value: status, label: orderStatusLabel(status) }))}
+        />
       </div>
       <div className="flex flex-col gap-2">
         <Label htmlFor="note">Note (optional)</Label>

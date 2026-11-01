@@ -4,6 +4,7 @@ import { useActionState } from "react"
 
 import { saveCollectionAction } from "@/app/admin/merchandising/actions"
 import { Button } from "@/components/ui/button"
+import { DateInput } from "@/components/ui/date-input"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
@@ -59,7 +60,7 @@ export const CollectionForm = ({ collection }: { collection?: CollectionRow }) =
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="flex flex-col gap-2">
           <Label htmlFor="startsAt">Starts at (optional)</Label>
-          <Input
+          <DateInput
             id="startsAt"
             name="startsAt"
             type="datetime-local"
@@ -68,7 +69,7 @@ export const CollectionForm = ({ collection }: { collection?: CollectionRow }) =
         </div>
         <div className="flex flex-col gap-2">
           <Label htmlFor="endsAt">Ends at (optional)</Label>
-          <Input id="endsAt" name="endsAt" type="datetime-local" defaultValue={toDateTimeLocalValue(collection?.endsAt)} />
+          <DateInput id="endsAt" name="endsAt" type="datetime-local" defaultValue={toDateTimeLocalValue(collection?.endsAt)} />
         </div>
       </div>
       <Button type="submit" disabled={pending}>

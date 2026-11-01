@@ -8,6 +8,8 @@ import { BottomNav } from "@/components/layout/bottom-nav"
 import { Footer } from "@/components/layout/footer"
 import { Header } from "@/components/layout/header"
 import { SkipLink } from "@/components/layout/skip-link"
+import { ThemeScript } from "@/components/theme/theme-script"
+import { ThemeSync } from "@/components/theme/theme-sync"
 import { WhatsAppButton } from "@/components/layout/whatsapp-button"
 import { Toaster } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
@@ -39,10 +41,16 @@ export const viewport: Viewport = {
 }
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
-  // Body bottom padding clears the fixed BottomNav below lg (64px + safe area); it sits under the footer.
+  // Body bottom padding clears the fixed bottom chrome below lg (--bottom-chrome + safe area): the 64px BottomNav, or the taller StickyBuyBar on product pages.
   return (
-    <html lang="en" className={`${inter.variable} ${jakarta.variable} h-full`}>
-      <body className="flex min-h-full flex-col pb-[calc(64px+env(safe-area-inset-bottom))] lg:pb-0">
+    <html lang="en" suppressHydrationWarning className="h-full">
+      <head>
+        <ThemeScript />
+      </head>
+      <body
+        className={`${inter.variable} ${jakarta.variable} flex min-h-full flex-col pb-[calc(var(--bottom-chrome,64px)+env(safe-area-inset-bottom))] lg:pb-0`}
+      >
+        <ThemeSync />
         <TooltipProvider>
           <SkipLink />
           <Header />
