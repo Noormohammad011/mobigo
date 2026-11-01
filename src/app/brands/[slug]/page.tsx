@@ -1,12 +1,13 @@
 import { Suspense } from "react"
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
+import { connection } from "next/server"
 
 import { PhoneListingFallback } from "@/components/listing/phone-listing-fallback"
 import { PhoneListing } from "@/components/listing/phone-listing"
 import { MetadataDynamicMarker } from "@/components/layout/metadata-dynamic-marker"
 import { track } from "@/lib/analytics"
-import { assertFlag } from "@/lib/flags"
+import { assertFlag, isFlagOn } from "@/lib/flags"
 import { parseListingQuery } from "@/lib/listing-params"
 import { getBrandPageMeta } from "@/lib/queries/catalog-meta"
 import { brandListingMetadataForRoute, brandStaticParams } from "@/lib/queries/route-metadata"
@@ -35,12 +36,13 @@ const BrandListingContent = async ({
   params: Promise<{ slug: string }>
   searchParams: Promise<Search>
 }) => {
+  await connection()
   await assertFlag("product_listing")
   const { slug } = await params
   const brand = await getBrandPageMeta(slug)
   if (!brand) notFound()
   const query = parseListingQuery(await searchParams, { brandSlug: slug })
-  const result = await getPhoneListing(query)
+  const [result, compareEnabled] = await Promise.all([getPhoneListing(query), isFlagOn("compare")])
   track({ name: "page_view", path: `/brands/${slug}` })
   return (
     <PhoneListing
@@ -50,6 +52,7 @@ const BrandListingContent = async ({
       query={query}
       fixedBrand
       result={result}
+      compareEnabled={compareEnabled}
     />
   )
 }

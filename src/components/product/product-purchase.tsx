@@ -9,6 +9,7 @@ import { addToCartAction } from "@/app/cart/actions"
 import { Price } from "@/components/commerce/price-block"
 import { QuantityStepper } from "@/components/commerce/quantity-stepper"
 import { Badge } from "@/components/ui/badge"
+import { CompareToggle } from "@/components/compare/compare-toggle"
 import { WishlistHeart } from "@/components/wishlist/wishlist-heart"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { addGuestLine } from "@/lib/cart/guest-cart"
@@ -33,10 +34,12 @@ export const ProductPurchase = ({
   product,
   signedIn,
   wishlisted,
+  compareEnabled = false,
 }: {
   product: ProductDetailPayload
   signedIn: boolean
   wishlisted: boolean
+  compareEnabled?: boolean
 }) => {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -121,7 +124,10 @@ export const ProductPurchase = ({
             <h1 className="font-display text-h1 text-foreground">{product.name}</h1>
             {selected ? <Price price={selected.price} compareAtPrice={selected.compareAtPrice} className="mt-3" /> : null}
           </div>
-          <WishlistHeart productId={product.id} productSlug={product.slug} initialSaved={wishlisted} />
+          <div className="flex items-start gap-2">
+            <WishlistHeart productId={product.id} productSlug={product.slug} initialSaved={wishlisted} />
+            {compareEnabled ? <CompareToggle productId={product.id} slug={product.slug} /> : null}
+          </div>
         </div>
 
         <div className="flex flex-col gap-3">

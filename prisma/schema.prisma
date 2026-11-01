@@ -147,6 +147,8 @@ model Product {
   displaySizeIn    Decimal?      @db.Decimal(3, 1) // 6.9
   batteryMah       Int?
   chipsetBrand     String?       // "Snapdragon", "Apple", "MediaTek"
+  mainCameraMp     Int?          // denormalized from spec sheet (spec 0016)
+  refreshRateHz    Int?          // denormalized from spec sheet (spec 0016)
   ramOptionsGb     Int[]         // e.g. {12,16}
   storageOptionsGb Int[]         // e.g. {256,512,1024}
   brandName        String        // copy of Brand.name for full-text search; updated when the brand is renamed

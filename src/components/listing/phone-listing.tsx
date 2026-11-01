@@ -16,6 +16,7 @@ export const PhoneListing = ({
   query,
   fixedBrand = false,
   result,
+  compareEnabled = false,
 }: {
   title: string
   intro: string
@@ -23,6 +24,7 @@ export const PhoneListing = ({
   query: ListingQuery
   fixedBrand?: boolean
   result: ListingResult
+  compareEnabled?: boolean
 }) => {
   const pageCount = Math.max(1, Math.ceil(result.total / LISTING_PAGE_SIZE))
   const page = Math.min(query.page, pageCount)
@@ -143,10 +145,10 @@ export const PhoneListing = ({
               </Link>
             </div>
           ) : (
-            <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+            <ul className="grid grid-cols-2 gap-3 md:grid-cols-3">
               {result.products.map((product) => (
                 <li key={product.id} className="min-w-0">
-                  <ProductCard product={product} />
+                  <ProductCard product={product} compareEnabled={compareEnabled} />
                 </li>
               ))}
             </ul>

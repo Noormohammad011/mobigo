@@ -4,11 +4,14 @@ import { Suspense } from "react"
 
 import { Wordmark } from "@/components/brand/wordmark"
 import { getNavBrands } from "@/lib/queries/shell"
+import { isFlagOn } from "@/lib/flags"
 
 import { CartLink } from "./cart-link"
+import { HeaderAdminSlot } from "./header-admin-slot"
 import { HeaderCartSlot } from "./header-cart-slot"
 import { HeaderIconLink } from "./header-icon-link"
 import { MobileMenu } from "./mobile-menu"
+import { MobileMenuStaffSlot } from "./mobile-menu-staff-slot"
 import { BUDGET_BANDS, NAV_BRAND_LIMIT } from "./nav"
 import { SearchBarWithSuggestions } from "./search-bar-with-suggestions"
 
@@ -24,14 +27,19 @@ const DESKTOP_LINKS = [
  * The rows are siblings (not nested) so the mobile search row can stick to the viewport.
  */
 export async function Header() {
-  const brands = await getNavBrands()
+  const [brands, showCompare] = await Promise.all([getNavBrands(), isFlagOn("compare")])
   const navBrands = brands.slice(0, NAV_BRAND_LIMIT)
+  const desktopLinks = showCompare ? DESKTOP_LINKS : DESKTOP_LINKS.filter((link) => link.href !== "/compare")
 
   return (
     <>
       <header className="bg-header text-header-foreground lg:sticky lg:top-0 lg:z-header">
         <div className="page-container flex h-14 items-center gap-1 md:h-16 md:gap-4">
-          <MobileMenu brands={navBrands} />
+          <Suspense
+            fallback={<MobileMenu brands={navBrands} showCompare={showCompare} showAdmin={false} />}
+          >
+            <MobileMenuStaffSlot brands={navBrands} showCompare={showCompare} />
+          </Suspense>
           <Link
             href="/"
             aria-label="MobiGo home"
@@ -43,7 +51,7 @@ export async function Header() {
           <SearchBarWithSuggestions id="search-desktop" className="hidden md:flex md:flex-1 lg:mx-4 lg:max-w-2xl" />
 
           <nav aria-label="Shortcuts" className="ml-auto hidden items-center gap-1 lg:flex">
-            {DESKTOP_LINKS.map(({ label, href, icon: Icon }) => (
+            {desktopLinks.map(({ label, href, icon: Icon }) => (
               <Link
                 key={href}
                 href={href}
@@ -58,6 +66,9 @@ export async function Header() {
           <div className="ml-auto flex items-center gap-1 md:ml-0">
             <Suspense fallback={<CartLink />}>
               <HeaderCartSlot />
+            </Suspense>
+            <Suspense fallback={null}>
+              <HeaderAdminSlot />
             </Suspense>
             <HeaderIconLink href="/account" aria-label="My account" className="hidden lg:inline-flex">
               <UserIcon strokeWidth={1.75} aria-hidden="true" />

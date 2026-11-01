@@ -221,6 +221,8 @@ model Product {
   displaySizeIn    Decimal?      @db.Decimal(3, 1) // 6.9
   batteryMah       Int?
   chipsetBrand     String?       // "Snapdragon", "Apple", "MediaTek"
+  mainCameraMp     Int?          // 50..200 (CHECK in migration)
+  refreshRateHz    Int?          // 60..240 (CHECK in migration)
   ramOptionsGb     Int[]         // e.g. {12,16}
   storageOptionsGb Int[]         // e.g. {256,512,1024}
   brandName        String        // copy of Brand.name for full-text search; updated when the brand is renamed
@@ -616,7 +618,7 @@ model Setting {
 
    | Column | Updated by (same transaction) |
    |---|---|
-   | `Product.minPrice`, `maxPrice`, `maxSaving`, `ramOptionsGb`, `storageOptionsGb`, spec filter columns | product/variant save |
+   | `Product.minPrice`, `maxPrice`, `maxSaving`, `ramOptionsGb`, `storageOptionsGb`, `displaySizeIn`, `batteryMah`, `chipsetBrand`, `network`, `mainCameraMp`, `refreshRateHz` | product/variant save |
    | `Product.inStock` | product/variant save **and** every stock change in decision 6 |
    | `Product.ratingAvg`, `ratingCount` | review approve / reject / delete |
    | `Product.brandName` | product save and brand rename |

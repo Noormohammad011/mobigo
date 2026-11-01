@@ -8,6 +8,7 @@ import { Shelf } from "@/components/home/shelf"
 import { TrustStrip } from "@/components/home/trust-strip"
 import { getBrandTiles, getHomeBanners, getHomeShelves } from "@/lib/queries/home"
 import { getStoreContact } from "@/lib/queries/shell"
+import { isFlagOn } from "@/lib/flags"
 
 export const metadata: Metadata = {
   title: { absolute: "MobiGo: Official Phones in Bangladesh · Cash on Delivery" },
@@ -21,11 +22,12 @@ export const metadata: Metadata = {
  * prerenders as static HTML and refreshes when the cache tags are revalidated.
  */
 export default async function HomePage() {
-  const [banners, shelves, brands, contact] = await Promise.all([
+  const [banners, shelves, brands, contact, compareEnabled] = await Promise.all([
     getHomeBanners(),
     getHomeShelves(),
     getBrandTiles(),
     getStoreContact(),
+    isFlagOn("compare"),
   ])
 
   // Interleave the budget tiles after the first two shelves, as on the reference stores.
@@ -39,11 +41,11 @@ export default async function HomePage() {
       <HeroCarousel slides={banners.hero} side={banners.side} />
       <TrustStrip />
       <BrandGrid brands={brands} />
-      {first && <Shelf shelf={first} />}
-      {second && <Shelf shelf={second} />}
+      {first && <Shelf shelf={first} compareEnabled={compareEnabled} />}
+      {second && <Shelf shelf={second} compareEnabled={compareEnabled} />}
       <BudgetTiles />
       {rest.map((s) => (
-        <Shelf key={s.id} shelf={s} />
+        <Shelf key={s.id} shelf={s} compareEnabled={compareEnabled} />
       ))}
       <SeoBlock />
     </div>

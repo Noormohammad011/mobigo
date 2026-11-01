@@ -9,7 +9,7 @@ import { ProductPurchase } from "@/components/product/product-purchase"
 import { RecentlyViewedRow, RecordRecentView } from "@/components/product/recently-viewed"
 import { track } from "@/lib/analytics"
 import { getCurrentUser } from "@/lib/auth/session"
-import { assertFlag } from "@/lib/flags"
+import { assertFlag, isFlagOn } from "@/lib/flags"
 import { productMetadataForRoute, productStaticParams } from "@/lib/queries/route-metadata"
 import {
   attachProductAvailability,
@@ -60,9 +60,11 @@ const ProductJsonLd = ({
 const ProductDetailPurchase = async ({
   catalog,
   searchParams,
+  compareEnabled,
 }: {
   catalog: ProductDetailCatalog
   searchParams: Promise<Search>
+  compareEnabled: boolean
 }) => {
   const user = await getCurrentUser()
   const [product, resolvedSearch, wishlisted] = await Promise.all([
@@ -77,7 +79,12 @@ const ProductDetailPurchase = async ({
     <>
       <ProductJsonLd product={product} variantId={variantParam} />
       <RecordRecentView item={{ slug: catalog.slug, name: catalog.name, brandName: catalog.brandName, imageUrl: heroImage }} />
-      <ProductPurchase product={product} signedIn={Boolean(user)} wishlisted={wishlisted} />
+      <ProductPurchase
+        product={product}
+        signedIn={Boolean(user)}
+        wishlisted={wishlisted}
+        compareEnabled={compareEnabled}
+      />
     </>
   )
 }
@@ -90,6 +97,7 @@ const ProductDetailContent = async ({
   searchParams: Promise<Search>
 }) => {
   await assertFlag("product_detail")
+  const compareEnabled = await isFlagOn("compare")
   const { slug } = await params
   const catalog = await getProductDetailCatalog(slug)
   if (!catalog) notFound()
@@ -98,7 +106,7 @@ const ProductDetailContent = async ({
   return (
     <div className="page-container flex flex-col gap-10 py-6 lg:py-10">
       <Suspense fallback={<div className="min-h-[480px] animate-pulse rounded-lg bg-skeleton" aria-hidden="true" />}>
-        <ProductDetailPurchase catalog={catalog} searchParams={searchParams} />
+        <ProductDetailPurchase catalog={catalog} searchParams={searchParams} compareEnabled={compareEnabled} />
       </Suspense>
 
       {catalog.keySpecs.length > 0 ? (
@@ -141,7 +149,7 @@ const ProductDetailContent = async ({
           <ul className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             {catalog.related.map((related) => (
               <li key={related.id}>
-                <ProductCard product={related} />
+                <ProductCard product={related} compareEnabled={compareEnabled} />
               </li>
             ))}
           </ul>

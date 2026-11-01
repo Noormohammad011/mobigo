@@ -33,12 +33,12 @@ _These are recommendations to keep your build orderly, not requirements. Skip an
 | 13 | Order history | Slice 3: Buy | in-progress |
 | 14 | Wishlist | Slice 4: Wishlist | in-progress |
 | 15 | Full spec data | Slice 5: Compare | in-progress |
-| 16 | New spec columns | Slice 5: Compare | planned |
-| 17 | Compare | Slice 5: Compare | planned |
-| 18 | Admin catalog | Slice 6: Operate | planned |
-| 19 | Admin merchandising | Slice 6: Operate | planned |
-| 20 | Admin orders | Slice 6: Operate | planned |
-| 21 | Admin settings & content pages | Slice 6: Operate | planned |
+| 16 | New spec columns | Slice 5: Compare | in-progress |
+| 17 | Compare | Slice 5: Compare | in-progress |
+| 18 | Admin catalog | Slice 6: Operate | in-progress |
+| 19 | Admin merchandising | Slice 6: Operate | in-progress |
+| 20 | Admin orders | Slice 6: Operate | in-progress |
+| 21 | Admin settings & content pages | Slice 6: Operate | in-progress |
 
 ## Already built
 
@@ -231,37 +231,79 @@ Full spec sheets for all 30 phones in the seed, plus a backfill script that load
 Spec [0015](../specs/0015-full-spec-data.md)
 assumed decision (spec 0015). code in `prisma/spec-sheet.ts`, `scripts/backfill-specs.ts`
 
-### 16. New spec columns · needs a decision
+### 16. New spec columns · in-progress
 The two new spec columns agreed for Compare and filtering, added through a migration.
 **Done when:** the migration applies cleanly, `pnpm db:drift` prints an empty migration, and the seed and backfill fill both columns.
-- [ ] Design it (spec): `/architect new spec columns`
+- [x] Design it (spec): `/architect new spec columns`
+- [x] Build it: `/develop new spec columns`
+  - [x] Migration and schema for `mainCameraMp` and `refreshRateHz` (AC-1, AC-2)
+  - [x] Seed and backfill plus denormalize helper (AC-3, AC-4)
+- [ ] Verify it: `/check verify new spec columns`
+- [ ] Test it: `/test new spec columns`
+Spec [0016](../specs/0016-new-spec-columns.md)
+code in `prisma/schema.prisma`, `prisma/migrations/20261031155157_product_spec_columns/`, `prisma/spec-sheet.ts`, `scripts/backfill-specs.ts`, `src/lib/catalog/denormalize-product.ts`
 
-### 17. Compare · needs a decision
+### 17. Compare · done
 `/compare` for up to 3 phones (2 on mobile), grouped by spec group, with a "highlight differences" toggle and no "better" badges (PRD CP-1, CP-2, C-4).
 **Done when:** the compare list persists in the browser, the floating "Compare (n)" pill appears when it is not empty, differences highlight on toggle, and no cell is labelled better or worse.
-- [ ] Design it (spec): `/architect compare`
+- [x] Design it (spec): `/architect compare`
+- [x] Build it: `/develop compare`
+  - [x] Compare store, pill, and entry points (AC-2, AC-3, AC-10)
+  - [x] `/compare` page and spec table (AC-4, AC-5, AC-6, AC-9)
+  - [x] Highlight differences toggle (AC-7, AC-8)
+- [ ] Verify it: `/check verify compare`
+- [ ] Test it: `/test compare`
+Spec [0017](../specs/0017-compare.md)
+code in `src/app/compare/`, `src/components/compare/`, `src/lib/compare/`
 
 ## Slice 6: Operate
 
-### 18. Admin catalog · needs a decision
+### 18. Admin catalog · in-progress
 Role gated admin for brands and products: base info, specs, description, images per colour, variants with SKU, price, compare at price and stock (PRD AD-2, AD-3).
 **Done when:** a staff user can create and edit a phone end to end and it appears on the store; non staff get no access; storefront caches refresh after a save.
-- [ ] Design it (spec): `/architect admin catalog`
+- [x] Design it (spec): `/architect admin catalog`
+- [x] Build it: `/develop admin catalog`
+  - [x] Admin shell and brands CRUD (AC-2, AC-3)
+  - [x] Product list and edit with variants (AC-4, AC-5, AC-6, AC-10)
+  - [x] Images and cache revalidation (AC-7, AC-8)
+- [ ] Verify it: `/check verify admin catalog`
+- [ ] Test it: `/test admin catalog`
+Spec [0018](../specs/0018-admin-catalog.md)
+code in `src/app/admin/catalog/`
 
-### 19. Admin merchandising
+### 19. Admin merchandising · in-progress
 Collections (home shelves) and banners with ordering and schedule (PRD AD-4).
 **Done when:** staff can reorder a shelf and schedule a banner, and the home page reflects it after save.
-- [ ] Build it: `/develop admin merchandising`
+- [x] Design it (spec): `/architect admin merchandising`
+  - [x] Build it: `/develop admin merchandising`
+  - [x] Collections and item reorder (AC-3, AC-4)
+  - [x] Banners CRUD and schedule (AC-5, AC-6)
+  - [x] Home cache revalidation (AC-7)
+- [ ] Verify it: `/check verify admin merchandising`
+- [ ] Test it: `/test admin merchandising`
+Spec [0019](../specs/0019-admin-merchandising.md)
+code in `src/app/admin/merchandising/`
 
-### 20. Admin orders · needs a decision · GA
+### 20. Admin orders · in-progress · GA
 Order list with filters, detail, and status changes with notes, each written to status history; stock released on cancel and restocked on return (PRD AD-5).
 **Done when:** every allowed status move works and is logged; disallowed moves are refused; reserved and real stock stay correct through cancel and return.
-- [ ] Design it (spec): `/architect admin orders`
+- [x] Design it (spec): `/architect admin orders`
+- [x] Build it: `/develop admin orders`
+  - [x] `transitionOrder` and stock tests (AC-5, AC-6, AC-9, AC-12)
+  - [x] Admin list, detail, and actions (AC-3, AC-4, AC-11)
+- [ ] Verify it: `/check verify admin orders`
+- [ ] Test it: `/test admin orders`
+- [ ] Review it (fresh model): `/check review admin orders`
+Spec [0020](../specs/0020-admin-orders.md)
+code in `src/app/admin/orders/`, `src/lib/orders/transition-order.ts`
 
-### 21. Admin settings & content pages
+### 21. Admin settings & content pages · in-progress
 Delivery zones and fees, contact info, WhatsApp number, outlets (PRD AD-7), and the CMS pages: About, Contact, FAQ and the policies (PRD 4.11).
 **Done when:** staff edits show in the footer and checkout fees; every footer policy link opens a real page.
-- [ ] Build it: `/develop admin settings & content pages`
+- [x] Build it: `/develop admin settings & content pages`
+- [ ] Verify it: `/check verify admin settings & content pages`
+- [ ] Test it: `/test admin settings & content pages`
+code in `src/app/admin/settings/`, `src/app/pages/`, `src/lib/queries/content.ts`
 
 ## Deferred
 Out of scope for the current build pass, kept so the plan stays honest.

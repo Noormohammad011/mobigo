@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next"
 import { Suspense } from "react"
 import { Inter, Plus_Jakarta_Sans } from "next/font/google"
 
+import { ComparePillSlot } from "@/components/compare/compare-pill-slot"
 import { BottomNavFallback } from "@/components/layout/bottom-nav-fallback"
 import { BottomNav } from "@/components/layout/bottom-nav"
 import { Footer } from "@/components/layout/footer"
@@ -53,6 +54,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <BottomNav />
           </Suspense>
           <WhatsAppButton />
+          <ComparePillSlot />
         </TooltipProvider>
         <Toaster />
       </body>

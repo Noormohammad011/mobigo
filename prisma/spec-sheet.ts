@@ -61,11 +61,22 @@ export type SpecProductInput = {
 
 const displayType = (slug: string) => (slug.includes("fold") || slug.includes("flip") ? "Foldable AMOLED" : "AMOLED")
 
-const mainMp = (slug: string) => {
+export const mainCameraMpFromSlug = (slug: string) => {
   let h = 0
   for (const ch of slug) h = (h * 31 + ch.charCodeAt(0)) % 1000
   return 50 + (h % 51)
 }
+
+export const refreshRateHzFromNetwork = (network: string | null | undefined) =>
+  network === "G5" ? 120 : 90
+
+/** Denormalized compare/filter columns kept in sync with specValuesForProduct (spec 0016). */
+export const denormalizedSpecColumns = (input: { slug: string; network: string | null | undefined }) => ({
+  mainCameraMp: mainCameraMpFromSlug(input.slug),
+  refreshRateHz: refreshRateHzFromNetwork(input.network),
+})
+
+const mainMp = mainCameraMpFromSlug
 
 export const ensureSpecCatalog = async (db: Db): Promise<Map<string, string>> => {
   const attrIds = new Map<string, string>()
@@ -131,4 +142,9 @@ export const upsertProductSpecs = async (db: Db, product: SpecProductInput, attr
       update: { value: row.value },
     })
   }
+  const columns = denormalizedSpecColumns({ slug: product.slug, network: product.network })
+  await db.product.update({
+    where: { id: product.id },
+    data: columns,
+  })
 }

@@ -25,6 +25,7 @@ const CheckoutBody = async () => {
   }
 
   const districts = await db.deliveryZoneDistrict.findMany({
+    where: { zone: { isActive: true } },
     select: { district: true, zone: { select: { name: true, fee: true } } },
     orderBy: { district: "asc" },
   })

@@ -8,6 +8,7 @@ export type AnalyticsEvent =
   | { name: "add_to_cart"; variantId: string; quantity: number }
   | { name: "checkout_start"; itemCount: number }
   | { name: "order_placed"; orderNumber: string }
+  | { name: "compare_add"; productId: string }
 
 export const track = (event: AnalyticsEvent): void => {
   void event

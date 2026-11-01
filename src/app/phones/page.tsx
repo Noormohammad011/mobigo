@@ -4,7 +4,7 @@ import type { Metadata } from "next"
 import { PhoneListingFallback } from "@/components/listing/phone-listing-fallback"
 import { PhoneListing } from "@/components/listing/phone-listing"
 import { track } from "@/lib/analytics"
-import { assertFlag } from "@/lib/flags"
+import { assertFlag, isFlagOn } from "@/lib/flags"
 import { parseListingQuery, toListingSearch } from "@/lib/listing-params"
 import { getPhoneListing } from "@/lib/queries/listing"
 
@@ -30,9 +30,18 @@ export const generateMetadata = async ({
 const PhonesListingContent = async ({ searchParams }: { searchParams: Promise<Search> }) => {
   await assertFlag("product_listing")
   const query = parseListingQuery(await searchParams)
-  const result = await getPhoneListing(query)
+  const [result, compareEnabled] = await Promise.all([getPhoneListing(query), isFlagOn("compare")])
   track({ name: "page_view", path: "/phones" })
-  return <PhoneListing title={title} intro={intro} path="/phones" query={query} result={result} />
+  return (
+    <PhoneListing
+      title={title}
+      intro={intro}
+      path="/phones"
+      query={query}
+      result={result}
+      compareEnabled={compareEnabled}
+    />
+  )
 }
 
 export default function PhonesPage({ searchParams }: { searchParams: Promise<Search> }) {

@@ -2,6 +2,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { ShoppingCartIcon } from "lucide-react"
 
+import { CompareToggle } from "@/components/compare/compare-toggle"
 import { WishlistHeart } from "@/components/wishlist/wishlist-heart"
 import { Price } from "@/components/commerce/price-block"
 import { Badge } from "@/components/ui/badge"
@@ -18,11 +19,13 @@ export function ProductCard({
   product: p,
   priority = false,
   className,
+  compareEnabled = false,
 }: {
   product: ProductCardData
   /** Eager-load the image (use only for cards in the first viewport). */
   priority?: boolean
   className?: string
+  compareEnabled?: boolean
 }) {
   const href = `/phones/${p.slug}`
   const soldOut = !p.inStock && !p.isPreorder
@@ -35,8 +38,11 @@ export function ProductCard({
       )}
     >
       <div className="relative">
-        <div className="pointer-events-none absolute top-0 right-0 z-20">
+        <div className="pointer-events-none absolute top-0 right-0 z-20 flex flex-col gap-1">
           <WishlistHeart productId={p.id} productSlug={p.slug} initialSaved={false} className="pointer-events-auto size-9 border-0 bg-card/90" />
+          {compareEnabled ? (
+            <CompareToggle productId={p.id} slug={p.slug} className="pointer-events-auto size-9 border-0 bg-card/90" />
+          ) : null}
         </div>
         <div className="pointer-events-none absolute top-0 left-0 z-10 flex flex-wrap gap-1">
           {p.is5g && <Badge variant="5g">5G</Badge>}

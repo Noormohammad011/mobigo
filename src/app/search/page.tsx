@@ -5,7 +5,7 @@ import { PhoneListingFallback } from "@/components/listing/phone-listing-fallbac
 import { PhoneListing } from "@/components/listing/phone-listing"
 import { MetadataDynamicMarker } from "@/components/layout/metadata-dynamic-marker"
 import { track } from "@/lib/analytics"
-import { assertFlag } from "@/lib/flags"
+import { assertFlag, isFlagOn } from "@/lib/flags"
 import { parseListingQuery } from "@/lib/listing-params"
 import { searchMetadataForRoute } from "@/lib/queries/route-metadata"
 import { getPhoneListing } from "@/lib/queries/listing"
@@ -32,7 +32,7 @@ const SearchListingContent = async ({ searchParams }: { searchParams: Promise<Se
     )
   }
   const query = parseListingQuery(params)
-  const result = await getPhoneListing(query, { searchQuery: q })
+  const [result, compareEnabled] = await Promise.all([getPhoneListing(query, { searchQuery: q }), isFlagOn("compare")])
   track({ name: "page_view", path: `/search?q=${encodeURIComponent(q)}` })
   return (
     <PhoneListing
@@ -41,6 +41,7 @@ const SearchListingContent = async ({ searchParams }: { searchParams: Promise<Se
       path="/search"
       query={{ ...query, searchQ: q }}
       result={result}
+      compareEnabled={compareEnabled}
     />
   )
 }

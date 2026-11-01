@@ -51,9 +51,9 @@ export async function placeOrderAction(
 
   const zoneDistrict = await db.deliveryZoneDistrict.findUnique({
     where: { district: parsed.data.district },
-    select: { zoneId: true },
+    select: { zoneId: true, zone: { select: { isActive: true } } },
   })
-  if (!zoneDistrict) return { ok: false, message: "Choose a district we deliver to." }
+  if (!zoneDistrict?.zone.isActive) return { ok: false, message: "Choose a district we deliver to." }
 
   const lines = user ? await getCheckoutLinesForUser(user.id) : guestLines
   const preview = await resolveCheckoutLines(lines)

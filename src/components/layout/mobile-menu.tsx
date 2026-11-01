@@ -1,6 +1,6 @@
 "use client"
 
-import { ArrowLeftRightIcon, BadgePercentIcon, ChevronRightIcon, MenuIcon, PackageSearchIcon, SmartphoneIcon, UserIcon } from "lucide-react"
+import { ArrowLeftRightIcon, BadgePercentIcon, ChevronRightIcon, LayoutDashboardIcon, MenuIcon, PackageSearchIcon, SmartphoneIcon, UserIcon } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
 
@@ -18,10 +18,24 @@ const QUICK_LINKS = [
   { label: "My account", href: "/account", icon: UserIcon },
 ] as const
 
+type QuickLink = { label: string; href: string; icon: (typeof QUICK_LINKS)[number]["icon"] }
+
 /** Left drawer for < lg (DESIGN_SYSTEM §6: desktop nav appears at lg). */
-export function MobileMenu({ brands }: { brands: NavBrand[] }) {
+export function MobileMenu({
+  brands,
+  showCompare = false,
+  showAdmin = false,
+}: {
+  brands: NavBrand[]
+  showCompare?: boolean
+  showAdmin?: boolean
+}) {
   const [open, setOpen] = useState(false)
   const close = () => setOpen(false)
+  let quickLinks: QuickLink[] = [...(showCompare ? QUICK_LINKS : QUICK_LINKS.filter((link) => link.href !== "/compare"))]
+  if (showAdmin) {
+    quickLinks = [{ label: "Admin", href: "/admin", icon: LayoutDashboardIcon }, ...quickLinks]
+  }
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -37,7 +51,7 @@ export function MobileMenu({ brands }: { brands: NavBrand[] }) {
 
         <nav aria-label="Menu" className="flex flex-1 flex-col gap-6 overflow-y-auto px-4 py-5 pb-safe">
           <ul className="grid gap-1">
-            {QUICK_LINKS.map(({ label, href, icon: Icon }) => (
+            {quickLinks.map(({ label, href, icon: Icon }) => (
               <li key={href}>
                 <Link
                   href={href}

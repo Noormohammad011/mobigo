@@ -37,6 +37,40 @@ export const reserveVariantStock = async (tx: Prisma.TransactionClient, variantI
   return updated === 1
 }
 
+/** Release reservation on cancel (SCHEMA decision 6). */
+export const releaseVariantReserve = async (tx: Prisma.TransactionClient, variantId: string, quantity: number): Promise<boolean> => {
+  const updated = await tx.$executeRaw`
+    UPDATE "ProductVariant"
+    SET "reservedStock" = "reservedStock" - ${quantity}
+    WHERE id = ${variantId}
+      AND "reservedStock" >= ${quantity}
+  `
+  return updated === 1
+}
+
+/** Fulfillment: consume physical stock and clear reservation. */
+export const deliverVariantStock = async (tx: Prisma.TransactionClient, variantId: string, quantity: number): Promise<boolean> => {
+  const updated = await tx.$executeRaw`
+    UPDATE "ProductVariant"
+    SET stock = stock - ${quantity},
+        "reservedStock" = "reservedStock" - ${quantity}
+    WHERE id = ${variantId}
+      AND stock >= ${quantity}
+      AND "reservedStock" >= ${quantity}
+  `
+  return updated === 1
+}
+
+/** Customer return: put units back on the shelf (does not re-reserve). */
+export const restockVariant = async (tx: Prisma.TransactionClient, variantId: string, quantity: number): Promise<boolean> => {
+  const updated = await tx.$executeRaw`
+    UPDATE "ProductVariant"
+    SET stock = stock + ${quantity}
+    WHERE id = ${variantId}
+  `
+  return updated === 1
+}
+
 export const syncProductInStock = async (tx: Prisma.TransactionClient, productId: string): Promise<void> => {
   const product = await tx.product.findUnique({
     where: { id: productId },

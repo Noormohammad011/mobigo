@@ -15,7 +15,7 @@ import { PrismaPg } from "@prisma/adapter-pg"
 
 import { PrismaClient, type NetworkType, type ProductStatus } from "../src/generated/prisma/client"
 import { classifyProduct } from "../src/lib/stock-rule"
-import { ensureSpecCatalog, upsertProductSpecs } from "./spec-sheet"
+import { ensureSpecCatalog, upsertProductSpecs, denormalizedSpecColumns } from "./spec-sheet"
 
 const url = process.env.DIRECT_URL ?? process.env.DATABASE_URL ?? ""
 const host = (() => {
@@ -195,6 +195,7 @@ async function main() {
   await db.product.deleteMany()
   await db.brand.deleteMany()
   await db.outlet.deleteMany()
+  await db.page.deleteMany()
   await db.setting.deleteMany()
 
   const now = Date.now()
@@ -242,6 +243,8 @@ async function main() {
       const maxPrice = Math.max(...variants.map((v) => v.price))
       const maxSaving = Math.max(0, ...variants.map((v) => (v.compareAtPrice ? v.compareAtPrice - v.price : 0)))
 
+      const specCols = denormalizedSpecColumns({ slug, network: p.network })
+
       const product = await db.product.create({
         data: {
           brandId: brand.id,
@@ -264,6 +267,8 @@ async function main() {
           displaySizeIn: p.display,
           batteryMah: p.battery,
           chipsetBrand: p.chipset,
+          mainCameraMp: specCols.mainCameraMp,
+          refreshRateHz: specCols.refreshRateHz,
           ramOptionsGb: [...new Set(p.configs.map((c) => c[0]))].sort((a, z) => a - z),
           storageOptionsGb: [...new Set(p.configs.map((c) => c[1]))].sort((a, z) => a - z),
           metaTitle: `${p.name} price in Bangladesh`,
@@ -435,7 +440,12 @@ async function main() {
     order_tracking: true,
     order_history: true,
     wishlist: true,
+    compare: true,
     recently_viewed: true,
+    admin_catalog: true,
+    admin_merchandising: true,
+    admin_orders: true,
+    admin_settings: true,
   }
   await db.setting.upsert({
     where: { key: "feature_flags" },
@@ -449,6 +459,73 @@ async function main() {
       { name: "Jamuna Future Park", address: "Level 4, Jamuna Future Park, Kuril, Dhaka", phone: "09612-345680", hours: "10am – 9pm, closed Wednesday", sortOrder: 1 },
     ],
   })
+
+  const cmsPages = [
+    {
+      slug: "about",
+      title: "About MobiGo",
+      metaDescription: "Official mobile phones in Bangladesh with cash on delivery.",
+      content:
+        "MobiGo is a mobile-first phone shop for Bangladesh. We sell genuine handsets from major brands with clear prices and cash on delivery.\n\nEvery order is confirmed by our team before dispatch. You pay the courier when your phone arrives.",
+    },
+    {
+      slug: "contact",
+      title: "Contact us",
+      metaDescription: "Call, email, or WhatsApp MobiGo customer support.",
+      content: "Questions about an order, stock, or warranty? Reach us using the details below. We reply during business hours (10am – 8pm, seven days).",
+    },
+    {
+      slug: "faq",
+      title: "FAQs",
+      metaDescription: "Common questions about ordering, delivery, and warranty at MobiGo.",
+      content:
+        "How do I pay?\nCash on delivery only. Pay the courier when your phone arrives.\n\nHow long does delivery take?\nInside Dhaka usually 1–2 days. Outside Dhaka 2–5 days depending on your district.\n\nIs the phone genuine?\nYes. We sell official stock with warranty as listed on each product page.\n\nCan I cancel my order?\nCall us as soon as possible. Once an order is shipped we follow the return policy.",
+    },
+    {
+      slug: "outlets",
+      title: "Our outlets",
+      metaDescription: "Visit MobiGo showrooms in Dhaka.",
+      content: "Browse phones in person at our partner outlets. Hours may vary on public holidays.",
+    },
+    {
+      slug: "privacy-policy",
+      title: "Privacy policy",
+      metaDescription: "How MobiGo handles your personal data.",
+      content:
+        "We collect name, phone, and address details to deliver your order. We do not sell your data. Order history is stored securely and used only for fulfilment and support.",
+    },
+    {
+      slug: "warranty-policy",
+      title: "Warranty policy",
+      metaDescription: "Official and unofficial warranty terms at MobiGo.",
+      content:
+        "Warranty coverage depends on the variant you buy (official distributor vs parallel import). The product page and invoice show the warranty type and duration for your SKU.",
+    },
+    {
+      slug: "delivery-policy",
+      title: "Delivery policy",
+      metaDescription: "Delivery areas, fees, and timelines for MobiGo orders.",
+      content:
+        "We deliver nationwide where our courier partners operate. Delivery fee and ETA depend on your district and are shown at checkout before you place the order.",
+    },
+    {
+      slug: "return-refund-policy",
+      title: "Return & refund",
+      metaDescription: "Returns for defective or wrong items.",
+      content:
+        "Report delivery issues within 48 hours of receiving the phone. Open-box checks with the courier are encouraged. Approved returns are restocked and resolved per our support team guidance—COD orders are adjusted offline.",
+    },
+    {
+      slug: "terms",
+      title: "Terms of service",
+      metaDescription: "Terms for using the MobiGo store.",
+      content:
+        "By placing an order you agree to accurate contact details, acceptance of cash on delivery, and our policies linked in the site footer. Prices and stock are confirmed on the server at checkout.",
+    },
+  ]
+  for (const page of cmsPages) {
+    await db.page.create({ data: { ...page, isPublished: true } })
+  }
 
   const attrIds = await ensureSpecCatalog(db)
   for (const product of created) {

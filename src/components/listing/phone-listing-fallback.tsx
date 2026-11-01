@@ -36,7 +36,7 @@ export const PhoneListingFallback = ({
           <div key={index} className={cn(pulse, "h-11 w-full")} />
         ))}
       </div>
-      <div className="grid min-w-0 flex-1 grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-5">
+      <div className="grid min-w-0 flex-1 grid-cols-2 gap-3 md:grid-cols-3">
         {Array.from({ length: 8 }, (_, index) => (
           <div key={index} className={cn(pulse, "aspect-[3/4] w-full rounded-lg")} />
         ))}

@@ -16,7 +16,7 @@ const ALL = "__all"
  * Shelf — DESIGN_SYSTEM §7.13, PRD H-4. Brand chips filter on the client; the track uses
  * scroll-snap with 2.2 / 3.2 / 5 cards visible, and prev/next buttons at ≥lg.
  */
-export function Shelf({ shelf }: { shelf: HomeShelf }) {
+export function Shelf({ shelf, compareEnabled = false }: { shelf: HomeShelf; compareEnabled?: boolean }) {
   const headingId = `shelf-${shelf.slug}`
   const track = useRef<HTMLUListElement>(null)
   const [brand, setBrand] = useState(ALL)
@@ -103,7 +103,7 @@ export function Shelf({ shelf }: { shelf: HomeShelf }) {
             key={p.id}
             className="shrink-0 basis-[calc((100%-1.5rem)/2.2)] snap-start md:basis-[calc((100%-2.25rem)/3.2)] lg:basis-[calc((100%-5rem)/5)]"
           >
-            <ProductCard product={p} />
+            <ProductCard product={p} compareEnabled={compareEnabled} />
           </li>
         ))}
       </ul>
